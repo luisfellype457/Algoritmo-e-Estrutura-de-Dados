@@ -9,8 +9,5 @@ void soma(RACIONAL *a, RACIONAL *b, RACIONAL *c){
 }
 
 int equivalencia(RACIONAL *a, RACIONAL *b){
-    if (a->num * b->den == a->den * b->num)
-        return 1;
-    else
-        return 0;
+    return (a->num * b->den == a->den * b->num);
 }
