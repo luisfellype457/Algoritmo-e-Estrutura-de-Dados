@@ -9,6 +9,14 @@ typedef struct nodo{
 
 typedef NODO *LISTA_ENC;
 
+void criar_lista(LISTA_ENC *lista){
+    *lista = NULL;
+}
+
+void eh_vazia(LISTA_ENC lista){
+    return !lista;
+}
+
 int tam(LISTA_ENC lista){
     if (!lista)
         return 0;
@@ -111,4 +119,18 @@ int eh_ord_rec(LISTA_ENC lista){
         return eh_ord_rec(lista->next);
     }
     return 1;
+}
+
+void gera_lista(LISTA_ENC *lista, int m, int n){
+    if (m > n){
+        printf("\n\tinvalid range!\n");
+        exit(4);
+    }
+    if (m == n){
+        criar_lista(lista);
+        ins(lista, m, 1);
+    } else {
+        gera_lista(lista, m+1, n);
+        ins(lista, m, 1);
+    }
 }
