@@ -20,24 +20,25 @@ int eh_vazia(LISTA_CIRCULAR lc){
 int tam(LISTA_CIRCULAR lc){
     if (!lc)
         return 0;
-    else {
-        NODO *aux;
-        int t = 1;
-        for(aux = lc->next; aux != lc; t++)
-            aux = aux->next;
-        return t;
+    NODO *aux = lc->next;
+    int t=1;
+    while(aux != lc){
+        aux = aux->next;
+        t++;
     }
+    return t;
 }
 
 void ins(LISTA_CIRCULAR *lc, int val, int pos){
-    if (pos < 1 || pos > tam(*lc)+1){
+    int tamanho = tam(*lc);
+    if (pos < 1 || pos > tamanho+1){
         printf("\n\tinvalid position!\n");
         exit(1);
     }
     NODO *novo = (NODO*) malloc(sizeof(NODO));
     if (!novo){
         printf("\n\tallocation error!\n");
-        exit(1);
+        exit(2);
     }
     novo->inf = val;
     if (!*lc){
@@ -45,11 +46,39 @@ void ins(LISTA_CIRCULAR *lc, int val, int pos){
         novo->next = novo;
     } else {
         NODO *aux = *lc;
-        if (pos == tam(*lc)+1)
+        if (pos == tamanho+1)
             *lc = novo;
-        else
-            for(; pos > 1; pos--, aux = aux->next);
+        for(; pos > 1; pos--, aux = aux->next);
         novo->next = aux->next;
         aux->next = novo;
+    }
+}
+
+int recup(LISTA_CIRCULAR lc, int pos){
+    if (pos < 1 || pos > tam(lc)){
+        printf("\n\tinvalid position!\n");
+        exit(4);
+    }
+    for (; pos > 0; pos--, lc=lc->next);
+    return lc->inf;
+}
+
+void ret(LISTA_CIRCULAR *lc, int pos){
+    int tamanho = tam(*lc);
+    if (pos < 1 || pos > tamanho){
+        printf("\n\tinvalid position!\n");
+        exit(5);
+    }
+    if (tamanho == 1){
+        free(*lc);
+        *lc = NULL;
+    } else {
+        NODO *aux = *lc, *aux2;
+        for (int i=pos; i > 1; i--, aux = aux->next);
+        if (pos == tamanho)
+            *lc = aux;
+        aux2 = aux->next;
+        aux->next = aux2->next;
+        free(aux2);
     }
 }
