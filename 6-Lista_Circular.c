@@ -7,6 +7,7 @@ typedef struct nodo{
     int inf;
     struct nodo *next;
 }NODO;
+
 typedef NODO *LISTA_CIRCULAR;
 
 void criar_lista(LISTA_CIRCULAR *lc){
@@ -80,5 +81,18 @@ void ret(LISTA_CIRCULAR *lc, int pos){
         aux2 = aux->next;
         aux->next = aux2->next;
         free(aux2);
+    }
+}
+
+void destruir(LISTA_CIRCULAR *lc){
+    if (*lc){
+        NODO *aux = (*lc)->next, *aux2;
+        while(aux != *lc){
+            aux2 = aux->next;
+            free(aux);
+            aux = aux2;
+        }
+        free(aux);
+        *lc = NULL;
     }
 }
