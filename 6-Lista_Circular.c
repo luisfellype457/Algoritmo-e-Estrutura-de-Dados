@@ -65,34 +65,12 @@ int recup(LISTA_CIRCULAR lc, int pos){
 }
 
 void ret(LISTA_CIRCULAR *lc, int pos){
-    int tamanho = tam(*lc);
-    if (pos < 1 || pos > tamanho){
+    if (pos < 1 || pos > tam(*lc)){
         printf("\n\tinvalid position!\n");
         exit(5);
-    }
-    if (tamanho == 1){
-        free(*lc);
-        *lc = NULL;
-    } else {
-        NODO *aux = *lc, *aux2;
-        for (int i=pos; i > 1; i--, aux = aux->next);
-        if (pos == tamanho)
-            *lc = aux;
-        aux2 = aux->next;
-        aux->next = aux2->next;
-        free(aux2);
     }
 }
 
 void destruir(LISTA_CIRCULAR *lc){
-    if (*lc){
-        NODO *aux = (*lc)->next, *aux2;
-        while(aux != *lc){
-            aux2 = aux->next;
-            free(aux);
-            aux = aux2;
-        }
-        free(aux);
-        *lc = NULL;
-    }
+
 }
