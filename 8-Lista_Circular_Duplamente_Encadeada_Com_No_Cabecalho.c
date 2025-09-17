@@ -71,11 +71,20 @@ void ret(LISTA_CIRC_DUPL_ENCAD_COM_NC pl, int pos){
 
 void destruir(LISTA_CIRC_DUPL_ENCAD_COM_NC pl){
     NODO *aux;
-    int tamanho = pl->inf;
+    int tam = pl->inf;
     do{
         aux = pl;
         pl = pl->prox;
         free(aux);
-        tamanho--;
-    }while(tamanho);
+        tam--;
+    }while(tam);
+}
+
+void inverter_lista(LISTA_CIRC_DUPL_ENCAD_COM_NC pl){
+    int t = tam(pl);
+    if (t>1){
+        NODO *aux;
+        for ();
+
+    }
 }

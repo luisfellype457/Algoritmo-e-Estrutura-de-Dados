@@ -3,49 +3,63 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct nodo{
+typedef struct nodo
+{
     int inf;
     struct nodo *ant;
     struct nodo *prox;
-}NODO;
+} NODO;
 
 typedef NODO *LISTA_DUP_ENC;
 
-void criar_lista(LISTA_DUP_ENC *ld){
-    *ld = NULL;
+void invalid_pos()
+{
+    printf("\n\tinvalid position!\n");
+    exit(1);
 }
 
-int eh_vazia(LISTA_DUP_ENC ld){
-    return !ld;
+void criar_lista(LISTA_DUP_ENC *l)
+{
+    *l = NULL;
 }
 
-int tam(LISTA_DUP_ENC ld){
-    int tamanho = 0;
-    for(; ld; tamanho++, ld = ld->prox);
-    return tamanho;
+int eh_vazia(LISTA_DUP_ENC l)
+{
+    return !l;
 }
 
-void ins(LISTA_DUP_ENC *ld, int val, int pos){
-    int tamanho = tam(*ld);
-    if (pos < 1 || pos > tamanho+1){
-        printf("\n\tinvalid position!\n");
-        exit(1);
-    }
-    NODO *novo = (NODO*) malloc(sizeof(NODO));
-    if(!novo){
+int tam(LISTA_DUP_ENC l)
+{
+    int t = 0;
+    for (; l; t++, l = l->prox)
+        ;
+    return t;
+}
+
+void ins(LISTA_DUP_ENC *l, int v, int k)
+{
+    if (k < 1 || k > tam(*l) + 1)
+        invalid_pos();
+    NODO *novo = (NODO *)malloc(sizeof(NODO));
+    if (!novo)
+    {
         printf("\n\tallocation error!\n");
         exit(2);
     }
-    novo->inf = val;
-    if (pos == 1){
+    novo->inf = v;
+    if (k == 1)
+    {
+        novo->prox = *l;
         novo->ant = NULL;
-        novo->prox = *ld;
-        *ld = novo;
+        *l = novo;
         if (novo->prox)
             novo->prox->ant = novo;
-    } else {
-        NODO *aux = *ld;
-        for(; pos > 2; pos--, aux = aux->prox);
+    }
+    else
+    {
+        NODO *aux = *l;
+        for (; k > 2; k--)
+            aux = aux->prox;
         novo->prox = aux->prox;
         aux->prox = novo;
         novo->ant = aux;
@@ -54,44 +68,35 @@ void ins(LISTA_DUP_ENC *ld, int val, int pos){
     }
 }
 
-int recup(LISTA_DUP_ENC ld, int pos){
-    if (pos < 1 || pos > tam(ld)){
-        printf("\n\tinvalid position!\n");
-        exit(3);
-    }
-    for(; pos > 1; ld = ld->prox);
-    return ld->inf;
+int recup(LISTA_DUP_ENC l, int k)
+{
+    if (k < 1 || k > tam(l))
+        invalid_pos();
+    for (; k > 1; k--, l = l->prox)
+        ;
+    return l->inf;
 }
 
-void ret(LISTA_DUP_ENC *ld, int pos){
-    int tamanho = tam(*ld);
-    if (pos < 1 || pos > tamanho){
-        printf("\n\tinvalid position!\n");
-        exit(4);
-    }
-    if (*ld){
-        NODO *aux = *ld;
-        if (pos == 1){
-            *ld = aux->prox;
-            free(aux);
-            if (*ld)
-                (*ld)->ant = NULL;
-        } else {
-            for(; pos > 1; pos--, aux = aux->prox);
-            aux->ant->prox = aux->prox;
-            if(aux->prox)
-                aux->prox->ant = aux->ant;
-            free(aux);
-        }
-    }
-}
-
-void destruir(LISTA_DUP_ENC ld){
+void ret(LISTA_DUP_ENC *l, int k)
+{
     NODO *aux;
-    while(ld){
-        aux = ld;
-        ld = ld->prox;
-        free(aux);
+    if (k < 1 || k > tam(*l))
+        invalid_pos();
+    if (k == 1)
+    {
+        aux = *l;
+        *l = aux->prox;
+        if (aux->prox)
+            aux->prox->ant = NULL;
     }
-    ld = NULL;
+    else
+    {
+        aux = *l;
+        for (; k > 1; k--)
+            aux = aux->prox;
+        aux->ant->prox = aux->prox;
+        if (aux->prox)
+            aux->prox->ant = aux->ant;
+    }
+    free(aux);
 }

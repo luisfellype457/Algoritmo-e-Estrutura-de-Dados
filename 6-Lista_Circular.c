@@ -1,76 +1,118 @@
-// CÓDIGO SOBRE LISTA CIRCULAR
+// CÓDIGO SOBRE LISTAS CIRCULARES
 
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct nodo{
+typedef struct nodo
+{
     int inf;
     struct nodo *next;
-}NODO;
+} NODO;
 
 typedef NODO *LISTA_CIRCULAR;
 
-void criar_lista(LISTA_CIRCULAR *lc){
-    *lc = NULL;
+void i_position()
+{
+    printf("\n\tinvalid position!\n");
+    exit(1);
 }
 
-int eh_vazia(LISTA_CIRCULAR lc){
-    return (!lc);
+void criar_lista(LISTA_CIRCULAR *l)
+{
+    *l = NULL;
 }
 
-int tam(LISTA_CIRCULAR lc){
-    if (!lc)
+int eh_vazia(LISTA_CIRCULAR l)
+{
+    return !l;
+}
+
+int tam(LISTA_CIRCULAR l)
+{
+    int t = 1;
+    if (!l)
         return 0;
-    NODO *aux = lc->next;
-    int t=1;
-    while(aux != lc){
-        aux = aux->next;
-        t++;
+    else
+    {
+        NODO *aux = l->next;
+        while (l != aux)
+        {
+            t++;
+            aux = aux->next;
+        }
+        return t;
     }
-    return t;
 }
 
-void ins(LISTA_CIRCULAR *lc, int val, int pos){
-    int tamanho = tam(*lc);
-    if (pos < 1 || pos > tamanho+1){
-        printf("\n\tinvalid position!\n");
-        exit(1);
-    }
+void ins(LISTA_CIRCULAR *l, int v, int k)
+{
+    int tamanho = tam(*l);
+    if (k < 1 || k > tamanho+1)
+        i_position();
     NODO *novo = (NODO*) malloc(sizeof(NODO));
-    if (!novo){
+    if (!novo)
+    {
         printf("\n\tallocation error!\n");
         exit(2);
     }
-    novo->inf = val;
-    if (!*lc){
-        *lc = novo;
+    novo->inf = v;
+    if (!*l)
+    {
         novo->next = novo;
-    } else {
-        NODO *aux = *lc;
-        if (pos == tamanho+1)
-            *lc = novo;
-        for(; pos > 1; pos--, aux = aux->next);
+        *l = novo;
+    }
+    else
+    {
+        NODO *aux = *l;
+        if (k == tamanho+1)
+            *l = novo;
+        else
+            for (; k > 1; k--, aux = aux->next);
         novo->next = aux->next;
         aux->next = novo;
     }
 }
 
-int recup(LISTA_CIRCULAR lc, int pos){
-    if (pos < 1 || pos > tam(lc)){
-        printf("\n\tinvalid position!\n");
-        exit(4);
-    }
-    for (; pos > 0; pos--, lc=lc->next);
-    return lc->inf;
+int recup(LISTA_CIRCULAR l, int k)
+{
+    if (k < 1 || k > tam(l))
+        i_position();
+    for (; k > 0; k--, l = l->next);
+    return l->inf;
 }
 
-void ret(LISTA_CIRCULAR *lc, int pos){
-    if (pos < 1 || pos > tam(*lc)){
-        printf("\n\tinvalid position!\n");
-        exit(5);
+void ret(LISTA_CIRCULAR *l, int k)
+{
+    int tamanho = tam(*l);
+    if (k < 1 || k > tamanho)
+        i_position();
+    if (tamanho == 1)
+    {
+        free(*l);
+        *l = NULL;
+    }
+    else
+    {
+        NODO *aux = *l, *aux2;
+        int i = k;
+        for (aux = *l; i > 1; i--, aux = aux->next);
+        aux2 = aux->next;
+        aux->next = aux2->next;
+        free(aux2);
+        if (k == tamanho+1)
+            *l = aux;
     }
 }
 
-void destruir(LISTA_CIRCULAR *lc){
-
+void destruir(LISTA_CIRCULAR l)
+{
+    NODO *aux, *aux2 = l;
+    if (l){
+        for (aux = l->next; aux != aux2;){
+            l = aux->next;
+            free(aux);
+            aux = l;
+        }
+        free(aux);
+    }
 }

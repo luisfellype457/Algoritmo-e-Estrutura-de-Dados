@@ -1,0 +1,28 @@
+Listas:
+
+Lista Encadeada:
+
+Lista Encadeada Com NC:
+
+Lista Circular:
+
+Lista Dupl. Encadeada:
+    inserção:
+        1 -> vazia
+        2 -> novo primeiro
+
+        3 -> novo último
+        4 -> demais posições
+    retirada:
+        1 -> um elemento
+        2 -> primeiro
+
+        3 -> último
+        4 -> demais posições
+        obs:
+            1 aux
+    obs:
+
+Lista Circular Dupl Encadeada:
+
+Lista Circular Dupl Encadeada Com NC:
