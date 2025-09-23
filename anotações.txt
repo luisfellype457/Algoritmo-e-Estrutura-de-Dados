@@ -1,28 +1,129 @@
-Listas:
+#LISTAS:
 
-Lista Encadeada:
+    vetores começam em 0
+    inserção:
+        1 -> atingiu o máximo
 
-Lista Encadeada Com NC:
+        i = l->N (pega a posição final do vetor + 1)
+        v[i] = v[i-1]
+        i-- até chegar a k-1 (posição no vetor)
+        ou seja, move os itens uma posição à frente
+        l->N++
+    retirada:
+        i = k-1 (posição a retirar no vetor)
+        ou k-- (para usar somente uma variável)
+        substitui: v[i] = v[i+1] até l->N-1
 
-Lista Circular:
+#LISTA ENCADEADA:
 
-Lista Dupl. Encadeada:
+    inserção:
+        1 -> primeiro
+        2 -> demais posições
+    retirada:
+        1 -> primeiro
+        2 -> demais posições
+            (aux e aux2).
+    destruir:
+        aux, l, free.
+
+#LISTA ENCADEADA COM NÓ CABEÇALHO:
+
+    NÓ CABEÇALHO = ALOCAR MEMÓRIA.
+
+    inserção: 
+        nao tem segredo. aux.
+
+    retirada:
+        nao tem segredo também.
+        aux->next = aux2->next. free(aux2).
+
+    destruir:
+        aux, l, free.
+
+#LISTA CIRCULAR:
+
+    INICIA NO ÚLTIMO.
+    guardar tamanho.
+
     inserção:
         1 -> vazia
-        2 -> novo primeiro
 
-        3 -> novo último
-        4 -> demais posições
+            elemento aponta para ele mesmo.
+
+        [ 2 -> novo último, 3 -> demais posições
+
+              if k == tamanho+1.
+              *l = novo.
+              else for(k,aux,next).
+              aux->next blablabla ]
+
     retirada:
-        1 -> um elemento
-        2 -> primeiro
+        1 -> somente um elemento
 
-        3 -> último
-        4 -> demais posições
-        obs:
-            1 aux
-    obs:
+            free(l), *l = NULL.
 
-Lista Circular Dupl Encadeada:
+        2 -> último elemento, 3 -> demais posições
 
-Lista Circular Dupl Encadeada Com NC:
+            aux, aux2.
+            int i = k
+            fazer operação com i ao invés de k
+            verificar se k == tamanho para alterar *l.
+            free(aux2).
+    
+    destruir:
+        if (l).
+        for(aux=l->next free(aux)) (de acordo com linder).
+        até aux = l.
+        depois free(aux) de novo.
+
+#LISTA DUPLAMENTE ENCADEADA:
+
+    EXISTE UM PRÓXIMO?  
+
+    inserção:
+        1 -> vazia, 2 -> novo primeiro
+
+            novo->ant = NULL
+            novo->prox = *l (NULL caso seja vazia)
+            *l = novo. if novo->prox? (caso não seja)
+
+        3 -> novo último, 4 -> demais posições
+
+            for(aux,prox,k>2).
+            novo->prox, novo->ant, novo->ant->prox.
+            if novo->prox? novo->prox->ant.
+
+    retirada:
+        1 -> um único elemento, 2 -> primeiro
+            if (k == 1)
+            *l = aux->prox
+            if aux->prox? (*l)->ant = NULL.
+            free(aux).
+
+        3 -> último, 4 -> demais posições
+            aux vai até a posição k.
+            conecta aux->ant com aux->prox.
+            if aux->prox? aux->prox->ant.
+            free(aux)
+        
+        poderia colocar o free(aux) fora do if-else.
+    
+    destruir:
+        aux, l, free.
+
+    inverter:
+        if l:
+            
+            
+
+#LISTA DUPLAMENTE ENCADEADA COM NÓ CABEÇALHO:
+
+
+
+#LISTA CIRCULAR DUPLAMENTE ENCADEADA:
+
+
+
+#LISTA CIRCULAR DUPLAMENTE ENCADEADA COM NÓ CABEÇALHO:
+
+
