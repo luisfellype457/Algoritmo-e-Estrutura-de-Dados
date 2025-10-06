@@ -50,6 +50,5 @@ int top_pop(PILHA_SEQ *p){
         printf("\n\tempty stack!\n");
         exit(4);
     }
-    return p->VAL[--p->TOPO];
-    --p->TOPO;
+    return p->VAL[p->TOPO--];
 }

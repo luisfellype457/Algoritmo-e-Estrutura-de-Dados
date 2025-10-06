@@ -10,84 +10,73 @@ typedef struct nodo{
 
 typedef NODO * LISTA_ENC;
 
-void criar_lista(LISTA_ENC *lista){
-    *lista = NULL;
+void criar_lista(LISTA_ENC *l){
+    *l = NULL;
 }
 
-int eh_vazia(LISTA_ENC lista){
-    return (!lista);
+int eh_vazia(LISTA_ENC l){
+    return !l;
 }
 
-int tam(LISTA_ENC lista){
-    int i;
-    for (i=0; lista; i++)
-        lista = lista->next;
-    return i;
+int tam(LISTA_ENC l){
+    int tam;
+    for (tam=0; l; tam++, l = l->next);
+    return tam;
 }
 
-void ins(LISTA_ENC *lista, int valor, int posicao){
-    if (posicao < 1 || posicao > tam(*lista)+1){
+void ins(LISTA_ENC *l, int v, int k){
+    if (k < 1 || k > tam(*l)+1){
         printf("\n\tinvalid position!\n");
-        exit(1);
+        return;
     }
-
-    NODO *novo;
-    novo = (NODO*) malloc(sizeof(NODO));
+    NODO *aux, *novo = (NODO*) malloc(sizeof(NODO));
     if (!novo){
         printf("\n\tallocation error!\n");
-        exit(2);
+        return;
     }
-    novo->inf = valor;
-
-    if (posicao == 1){
-        
-        novo->next = *lista;
-        *lista = novo;
+    novo->inf = v;
+    if (k == 1){
+        novo->next = *l;
+        *l = novo;
     } else {
-        
-        LISTA_ENC aux = *lista;
-        for (posicao; posicao > 2; posicao--)
-            aux = aux->next;
+        for (aux = *l; k > 2; k--, aux = aux->next);
         novo->next = aux->next;
         aux->next = novo;
     }
-
 }
 
-int recup(LISTA_ENC lista, int posicao){
-    if (posicao < 1 || posicao > tam(lista)){
+int recup(LISTA_ENC l, int k){
+    if (k < 1 || k > tam(l)){
         printf("\n\tinvalid position!\n");
-        exit(3);
+        return;
     }
-    for (posicao; posicao > 1; posicao--)
-        lista = lista->next;
-    return lista->inf;
+    for (; k < 1; k--, l = l->next);
+    return l->inf;
 }
 
-void ret(LISTA_ENC *lista, int posicao){
-    if (posicao < 1 || posicao > tam(*lista)){
+void ret(LISTA_ENC *l, int k){
+    NODO *aux = *l;
+    if (k < 1 || k > tam(*l)){
         printf("\n\tinvalid position!\n");
-        exit(4);
+        return;
     }
-    NODO *aux = *lista;
-    if (posicao == 1){
-        *lista = aux->next;
+    if (k == 1){
+        *l = aux->next;
         free(aux);
     } else {
         NODO *aux2;
-        for (posicao; posicao > 2; posicao--)
-            aux = aux->next;
+        for (; k < 2; k--, aux = aux->next);
         aux2 = aux->next;
         aux->next = aux2->next;
         free(aux2);
     }
 }
 
-void destruir(LISTA_ENC lista){
-    NODO *aux = lista;
-    while (lista){
-        aux = lista;
-        lista = lista->next;
+void destruir(LISTA_ENC l){
+    NODO *aux;
+    while (l){
+        aux = l;
+        l = l->next;
         free(aux);
     }
 }

@@ -27,20 +27,15 @@ int eh_vazia(LISTA_CIRCULAR l)
     return !l;
 }
 
-int tam(LISTA_CIRCULAR l)
-{
-    int t = 1;
+int tam(LISTA_CIRCULAR l){
     if (!l)
         return 0;
-    else
-    {
-        NODO *aux = l->next;
-        while (l != aux)
-        {
-            t++;
+    else {
+        int tam=1;
+        NODO *aux;
+        for (aux = l->next; aux != l; tam++)
             aux = aux->next;
-        }
-        return t;
+        return tam;
     }
 }
 
@@ -81,38 +76,30 @@ int recup(LISTA_CIRCULAR l, int k)
     return l->inf;
 }
 
-void ret(LISTA_CIRCULAR *l, int k)
-{
+void ret(LISTA_CIRCULAR *l, int k){
     int tamanho = tam(*l);
     if (k < 1 || k > tamanho)
-        i_position();
-    if (tamanho == 1)
-    {
+        return;
+    if (tamanho == 1){
         free(*l);
         *l = NULL;
-    }
-    else
-    {
-        NODO *aux = *l, *aux2;
+    } else {
+        NODO *aux, *aux2;
         int i = k;
-        for (aux = *l; i > 1; i--, aux = aux->next);
+        for (aux = *l; k > 1; k--, aux = aux->next);
         aux2 = aux->next;
         aux->next = aux2->next;
-        free(aux2);
-        if (k == tamanho+1)
+        if (i == tamanho)
             *l = aux;
+        free(aux2);
     }
 }
 
-void destruir(LISTA_CIRCULAR l)
-{
-    NODO *aux, *aux2 = l;
+void destruir(LISTA_CIRCULAR l){
     if (l){
-        for (aux = l->next; aux != aux2;){
-            l = aux->next;
+        NODO *aux;
+        for (aux = l->next; aux != l; aux = aux->next)
             free(aux);
-            aux = l;
-        }
         free(aux);
     }
 }

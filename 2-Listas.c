@@ -19,88 +19,59 @@ void criar_lista(LISTA *l){
 }
 
 int eh_vazia(LISTA *l){
-    return (l->N == 0);
+    return !l->N;
 }
 
 int tamanho(LISTA *l){
-    return (l->N);
+    return l->N;
 }
 
-void inserir(LISTA *l, int valor, int posicao){
-    int i = max;
+void ins(LISTA *l, int v, int k){
+    int i;
 
-    if (posicao < 1 || posicao > l->N+1){
-
+    if (k < 1 || k > l->N+1)
         invalid();
 
-    } else if (l->N == max){
-
-        printf("Full list!");
+    if (l->N == max){
+        printf("\n\tfull list!\n");
         exit(2);
-
-    } else {
-
-        while (i > posicao-1){
-            l->val[i] = l->val[i-1];
-            i--;
-        }
-
-        l->val[i] = valor;
-
-        l->N++;
     }
+    for (i = l->N; k <= i; i--)
+        l->val[i] = l->val[i-1];
+    
+    l->val[k-1] = v;
+
+    l->N++;
 }
 
-int recuperar(LISTA *l, int posicao){
-    if (posicao < 1 || posicao > l->N){
-        
+int recup(LISTA *l, int k){
+    if (k < 1 || k > l->N)
         invalid();
 
-    } else {
-
-        return l->val[posicao-1];
-    }
+    return l->val[k-1];
 }
 
-void retirar(LISTA *l, int posicao){
-
-    if (posicao < 1 || posicao > l->N){
-        
+void ret(LISTA *l, int k){
+    if (k < 1 || k > l->N)
         invalid();
-
-    } else {
-
-        for (posicao-1; posicao < l->N-1; posicao++)
-
-            l->val[posicao] = l->val[posicao + 1];
-
-        l->N--;
-
-    }
+    l->N--;
+    for (k-1; k < l->N; k++)
+        l->val[k+1] = l->val[k];
 }
 
 int pertence(LISTA *l, int v){
     int i;
-
-    for (i=0; i <= l->N-1; i++){
-        
+    for (i=0; i < l->N; i++)
         if (l->val[i] == v)
-
             return 1;
-    }
-
     return 0;
 }
 
 int eh_ordenada(LISTA *l){
     int i;
-
-    for (i=0; i < l->N-1; i++) {
-
+    for (i=0; i < l->N-1; i++)
         if (l->val[i] > l->val[i+1])
             return 0;
-    }
-
     return 1;
 }
 

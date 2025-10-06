@@ -101,10 +101,24 @@ void ret(LISTA_DUP_ENC *l, int k)
     free(aux);
 }
 
-void inverter_lista(LISTA_DUP_ENC *l){
-    if (*l){
+void destruir(LISTA_DUP_ENC l)
+{
+    NODO *aux;
+    while (l)
+    {
+        aux = l;
+        l = l->prox;
+        free(aux);
+    }
+}
+
+void inverter_lista(LISTA_DUP_ENC *l)
+{
+    if (*l)
+    {
         NODO *aux;
-        do {
+        do
+        {
             aux = (*l)->prox;
             (*l)->prox = (*l)->ant;
             (*l)->ant = aux;

@@ -112,18 +112,17 @@
         aux, l, free.
 
     inverter:
-        if l:
-            
-            
-
-#LISTA DUPLAMENTE ENCADEADA COM NÓ CABEÇALHO:
-
-
-
-#LISTA CIRCULAR DUPLAMENTE ENCADEADA:
-
-
+        if *l:
+            do
+            aux = *l->prox
+            *l->prox = *l->ant
+            *l->ant = aux
+            if *l: *l = aux;
+        while (aux)   
 
 #LISTA CIRCULAR DUPLAMENTE ENCADEADA COM NÓ CABEÇALHO:
 
+    CIRCULAR (APONTA PARA ELA MESMA)
 
+    inserção:
+        

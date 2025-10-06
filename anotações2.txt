@@ -1,0 +1,21 @@
+-Fila sequencial:
+
+    F = (F+1) % MAX
+
+    inserção:
+        if f->N == MAX
+
+    retirada:
+        eh_vazia
+
+    cons_ret:
+        eh_vazia
+
+-Fila encadeada
+-Fila encadeada (dinamica)
+-Pilha (estática e sequencial)
+-Pilha encadeada (dinamica)
+-árvores binárias (estat. e sequenc)
+-árvores binárias (dinam. encad.)
+-árvores balanceadas
+-árvore AVL
