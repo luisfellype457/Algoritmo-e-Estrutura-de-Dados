@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #define MAX 100
 
-typedef struct {
+typedef struct{
     int N;
     int INICIO;
     int FIM;
@@ -10,11 +10,11 @@ typedef struct {
 }FILA_SEQ;
 
 void criar_fila(FILA_SEQ *f){
+    f->N = f->INICIO = 0;
     f->FIM = -1;
-    f->INICIO = f->N = 0;
 }
 
-int eh_vazia(FILA_SEQ *f){
+int eh_vazia_f(FILA_SEQ *f){
     return !f->N;
 }
 
@@ -31,23 +31,20 @@ void ins(FILA_SEQ *f, int v){
 }
 
 int cons(FILA_SEQ *f){
-    if (eh_vazia(f))
+    if (eh_vazia_f(f))
         return;
-    else
-        return f->val[f->INICIO];
+    return f->val[f->INICIO];
 }
 
 void ret(FILA_SEQ *f){
-    if (eh_vazia(f))
+    if (eh_vazia_f(f))
         return;
-    else {
-        f->INICIO = (f->INICIO+1) % MAX;
-        f->N--;
-    }
+    f->INICIO = (f->INICIO+1) % MAX;
+    f->N--;
 }
 
 int cons_ret(FILA_SEQ *f){
-    if (eh_vazia(f))
+    if (eh_vazia_f(f))
         return;
     else {
         int v = f->val[f->INICIO];
@@ -57,10 +54,8 @@ int cons_ret(FILA_SEQ *f){
     }
 }
 
-// recursividade
-
-void gera_lista(FILA_SEQ *f, int m, int n){
-    if (m < n)
+void gera_fila(FILA_SEQ *f, int m, int n){
+    if (m > n)
         return;
     if (m == n){
         criar_fila(f);

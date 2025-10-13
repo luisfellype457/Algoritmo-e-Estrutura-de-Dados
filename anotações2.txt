@@ -1,20 +1,126 @@
--Fila sequencial:
+- FILA SEQUENCIAL:
 
-    F = (F+1) % MAX
+    (F = (F+1) % MAX)
+
+    criar_fila(*f)
+    eh_vazia(*f)
+    ins(*f, v)
+    cons(*f)
+    ret(*f)
+    cons_ret(*f)
 
     inserção:
         if f->N == MAX
 
     retirada:
-        eh_vazia
+        if eh_vazia
 
     cons_ret:
-        eh_vazia
+        if eh_vazia
 
--Fila encadeada
--Fila encadeada (dinamica)
--Pilha (estática e sequencial)
--Pilha encadeada (dinamica)
+
+- FILA ENCADEADA:
+
+    (DESCRITOR)
+
+    criar_fila(*f):
+        alocar memória, inicio/fim = NULL
+    eh_vazia(f)
+    ins(f, v)
+    cons(f)
+    ret(f)
+    cons_ret(f)
+    destruir(f)
+
+    inserção:
+        alocar memória (novo)
+        if eh_vazia:
+            inicio = novo
+        else:
+            fim->next = novo
+        fim = novo
+
+    retirada:
+        if eh_vazia
+        aux = inicio
+        inicio = aux->next
+        if inicio == NULL:
+            fim = NULL
+        free(aux)
+
+    cons_ret:
+        mesmo processo retidada
+        porém guarda aux->inf
+    
+    destruir:
+        { aux = inicio
+          inicio = aux->next
+          free(aux) }   // limpa a fila
+        free(f)   // limpa o descritor
+
+
+- PILHA SEQUENCIAL:
+    
+    (TOPO)
+
+    criar_pilha(*p)
+    eh_vazia(*p)
+    push(*p, v)
+    top(*p)
+    pop(*p)
+    top_pop(*p)
+    inverter_fila(*f)     // usando pilha
+
+    inserção:
+        if TOPO == MAX-1
+        p->val[++p->TOPO] = v
+
+    retirada:
+        if eh_vazia
+        p->TOPO--
+
+    inverter_fila:
+        cria a pilha
+        enquanto a fila não é vazia:
+            insere os elementos na pilha
+            primeiro -> último
+        enquanto a pilha não é vazia:
+            insere os elementos na fila
+            último -> primeiro
+
+
+- PILHA ENCADEADA:
+
+    (lista encadeada invertida)
+
+    create(*p)    // ficou em inglês(?)
+    is_empty(p)
+    push(*p, v)
+    top(p)
+    pop(*p)
+    top_pop(*p)
+    destroy(p)
+
+    inserção:
+        aloca memória (new)
+        new->next = *p
+        *p = new
+
+    retirada:
+        if (!*p) ou if (eh_vazia)
+        aux = *p
+        *p = aux->next
+        free(aux)
+
+    top_pop:
+        mesmo que retirada mas v = aux->inf
+
+    destroy:
+        aux = p
+        p = p->next
+        free(aux)
+
+
 -árvores binárias (estat. e sequenc)
 -árvores binárias (dinam. encad.)
 -árvores balanceadas

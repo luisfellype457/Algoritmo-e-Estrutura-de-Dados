@@ -1,383 +1,262 @@
+// FILA SEQUENCIAL
+
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX 10
+#define MAX 100
 
-typedef struct{
+typedef struct {
     int N;
+    int INICIO;
+    int FIM;
     int val[MAX];
-}LISTA;
+}FILA_SEQ;
 
-void criar_lista(LISTA *l){
-    l->N = 0;
+void criar_fila_s(FILA_SEQ *f){
+    f->N = f->INICIO = 0;
+    f->FIM = -1;
 }
 
-int eh_vazia(LISTA *l){
-    return !l->N; //l->N == 0;
+int eh_vazia_fs(FILA_SEQ *f){
+    return !f->N;
 }
 
-int tam(LISTA *l){
-    return l->N;
+int tam_fs(FILA_SEQ *f){
+    return f->N;
 }
 
-void ins(LISTA *l, int v, int k){
-    int i = l->N;
-    if (k < 1 || k > l->N+1){
-        printf("safada");
-        exit(1); 
-    }
-    if (l->N == MAX){
-        printf("safada2");
-        exit(2);
-    }
-    for (; i >= k; i--){
-        l->val[i] = l->val[i-1];
-    }
-    l->val[i] = v;
-    l->N++;
-}
-
-int recup(LISTA *l, int k){
-    if (k < 1 || k > l->N){
-        printf("\n\tinvalid position!\n");
-        exit(2);
-    }
-    return l->val[k-1];
-}
-
-void ret(LISTA *l, int k){
-    if (k < 1 || k > l->N){
-        printf("\n\tinvalid position!\n");
-        exit(3);
-    }
-    l->N--;
-    for (k--; k < l->N; k++)
-        l->val[k] = l->val[k+1];
-
-}
-
-// LISTA_ENCADEADA
-
-typedef struct nodo{
-    int inf;
-    struct nodo *next;
-}NODO;
-
-typedef NODO *LISTA_ENC;
-
-void criar_lista(LISTA_ENC *l){
-    *l = NULL;
-}
-
-int eh_vazia(LISTA_ENC l){
-    return !l;
-}
-
-int tam(LISTA_ENC l){
-    int tam;
-    for (tam=0; l; tam++, l = l->next);
-    return tam;
-}
-
-void ins(LISTA_ENC *l, int v, int k){
-    if (k < 1 || k > tam(*l)+1){
-        printf("\n\tinvalid position!\n");
+void ins_fs(FILA_SEQ *f, int v){
+    if (f->N == MAX)
         return;
-    }
-    NODO *aux, *novo = (NODO*) malloc(sizeof(NODO));
-    if (!novo){
-        printf("\n\tallocation error!\n");
+    f->FIM = (f->FIM+1) % MAX;
+    f->val[f->FIM] = v;
+    f->N++;
+}
+
+int cons_fs(FILA_SEQ *f){
+    if (eh_vazia_fs(f))
         return;
-    }
-    novo->inf = v;
-    if (k == 1){
-        novo->next = *l;
-        *l = novo;
-    } else {
-        for (aux = *l; k > 2; k--, aux = aux->next);
-        novo->next = aux->next;
-        aux->next = novo;
-    }
+    return f->val[f->INICIO];
 }
 
-int recup(LISTA_ENC l, int k){
-    if (k < 1 || k > tam(l)){
-        printf("\n\tinvalid position!\n");
+void ret_fs(FILA_SEQ *f){
+    if (eh_vazia_fs(f))
         return;
-    }
-    for (; k < 1; k--, l = l->next);
-    return l->inf;
+    f->INICIO = (f->INICIO+1) % MAX;
+    f->N--;
 }
 
-void ret(LISTA_ENC *l, int k){
-    NODO *aux = *l;
-    if (k < 1 || k > tam(*l)){
-        printf("\n\tinvalid position!\n");
+int cons_ret_fs(FILA_SEQ *f){
+    if (eh_vazia_fs(f))
         return;
-    }
-    if (k == 1){
-        *l = aux->next;
-        free(aux);
-    } else {
-        NODO *aux2;
-        for (; k < 2; k--, aux = aux->next);
-        aux2 = aux->next;
-        aux->next = aux2->next;
-        free(aux2);
-    }
-}
-
-void destruir(LISTA_ENC l){
-    NODO *aux;
-    while (l){
-        aux = l;
-        l = l->next;
-        free(aux);
-    }
-}
-
-// LISTA_ENCADEADA_NC
-
-typedef struct nodo{
-    int inf;
-    struct nodo *next;
-}NODO;
-
-typedef NODO* LISTA_ENC_NC;
-
-void criar_lista(LISTA_ENC_NC *l){
-    *l = (NODO*) malloc(sizeof(NODO));
-    if (!*l){
-        return;
-    }
-    (*l)->inf = 0;
-    (*l)->next = NULL;
-}
-
-int eh_vazia(LISTA_ENC_NC l){
-    return !l->inf;
-}
-
-int tam(LISTA_ENC_NC l){
-    return l->inf;
-}
-
-void ins(LISTA_ENC_NC l, int v, int k){
-    NODO *aux, *novo;
-    if (k < 1 || k > l->inf+1)
-        return;
-    novo = (NODO*) malloc(sizeof(NODO));
-    if (!novo)
-        return;
-    novo->inf = v;
-    for (aux = l; k < 1; k--, aux = aux->next);
-    novo->next = aux->next;
-    aux->next = novo;
-    l->inf++;
-}
-
-int recup(LISTA_ENC_NC l, int k){
-    if (k < 1 || k > l->inf)
-        return;
-    for (; k < 0; k--, l = l->next);
-    return l->inf;
-}
-
-void ret(LISTA_ENC_NC l, int k){
-    NODO *aux2;
-    if (k < 1 || k > l->inf)
-        return;
-    l->inf--;
-    for (; k > 1; k--, l = l->next);
-    aux2 = l->next;
-    l->next = aux2->next;
-    free(aux2);
-}
-
-void destruir(LISTA_ENC_NC l){
-    NODO *aux;
-    while (l){
-        aux = l;
-        l = l->next;
-        free(aux);
-    }
-}
-
-// LISTA_CIRCULAR
-
-typedef struct nodo{
-    int inf;
-    struct nodo *next;
-}NODO;
-
-typedef NODO *LISTA_CIRC;
-
-void criar_lista(LISTA_CIRC *l){
-    *l = NULL;
-}
-
-int eh_vazia(LISTA_CIRC l){
-    return !l;
-}
-
-int tam(LISTA_CIRC l){
-    if (!l)
-        return 0;
     else {
-        int tam=1;
-        NODO *aux;
-        for (aux = l->next; aux != l; tam++)
-            aux = aux->next;
-        return tam;
+        int v = f->val[f->INICIO];
+        f->INICIO = (f->INICIO+1) % MAX;
+        f->N--;
+        return v;
     }
 }
 
-void ins(LISTA_CIRC *l, int v, int k){
-    NODO *novo;
-    int tamanho = tam(*l);
-    if (k < 1 || k > tamanho+1)
+void gera_fila_s(FILA_SEQ *f, int m, int n){
+    if (m > n)
         return;
+    if (m == n){
+        criar_fila_s(f);
+        ins_fs(f, m);
+    } else {
+        gera_fila_s(f, m, n-1);
+        ins_fs(f, n);
+    }
+}
+
+// FILA ENCADEADA
+
+typedef struct nodo {
+    int inf;
+    struct nodo * next;
+}NODO;
+
+typedef struct {
+    NODO * INICIO;
+    NODO * FIM;
+}DESCRITOR;
+
+typedef DESCRITOR * FILA_ENC;
+
+void criar_fila_e(FILA_ENC *f){
+    *f = (FILA_ENC) malloc(sizeof(DESCRITOR));
+    if (!*f)
+        return;
+    (*f)->INICIO = (*f)->FIM = NULL;
+}
+
+int eh_vazia_fe(FILA_ENC f){
+    return !f->INICIO;
+}
+
+void ins_fe(FILA_ENC f, int v){
+    NODO *novo;
     novo = (NODO*) malloc(sizeof(NODO));
     if (!novo)
         return;
     novo->inf = v;
-    if (!tamanho){
-        novo->next = novo;
-        *l = novo;
-    } else {
-        NODO *aux = *l;
-        if (k == tamanho+1)
-            *l = novo;
-        else 
-            for (; k > 1; k--, aux = aux->next);
-        novo->next = aux->next;
-        aux->next = novo;
-    }
+    novo->next = NULL;
+    if (eh_vazia_fe(f))
+        f->INICIO = novo;
+    else
+        f->FIM->next = novo;
+    f->FIM = novo;
 }
 
-int recup(LISTA_CIRC l, int k){
-    if (k < 1 || k > tam(l))
+int cons_fe(FILA_ENC f){
+    if (eh_vazia_fe(f))
         return;
-    for (; k > 1; k--, l = l->next);
-    return l->inf;
+    return f->INICIO->inf;
 }
 
-void ret(LISTA_CIRC *l, int k){
-    int tamanho = tam(*l);
-    if (k < 1 || k > tamanho)
+void ret_fe(FILA_ENC f){
+    if (eh_vazia_fe(f))
         return;
-    if (tamanho == 1){
-        free(*l);
-        *l = NULL;
-    } else {
-        NODO *aux, *aux2;
-        int i = k;
-        for (aux = *l; k > 1; k--, aux = aux->next);
-        aux2 = aux->next;
-        aux->next = aux2->next;
-        if (i == tamanho)
-            *l = aux;
-        free(aux2);
-    }
-}
-
-void destruir(LISTA_CIRC l){
-    if (l){
-        NODO *aux;
-        for (aux = l->next; aux != l; aux = aux->next)
-            free(aux);
+    else {
+        NODO *aux = f->INICIO;
+        f->INICIO = aux->next;
+        if (!f->INICIO)
+            f->FIM = NULL;
         free(aux);
     }
 }
 
-// LISTA_DUPLAMENTE_ENCADEADA
+int cons_ret_fe(FILA_ENC f){
+    if (eh_vazia_fe(f))
+        return;
+    else {
+        NODO *aux = f->INICIO;
+        int v = aux->inf;
+        f->INICIO = aux->next;
+        if (!f->INICIO)
+            f->FIM = NULL;
+        free(aux);
+        return v;
+    }
+}
+
+void destruir_fe(FILA_ENC f){
+    NODO *aux;
+    while(f->INICIO){
+        aux = f->INICIO;
+        f->INICIO = aux->next;
+        free(aux);
+    }
+    free(f);
+}
+
+// PILHA SEQUENCIAL
+
+typedef struct {
+    int TOPO;
+    int val[MAX];
+}PILHA_SEQ;
+
+void criar_pilha_s(PILHA_SEQ *p){
+    p->TOPO = -1;
+}
+
+int eh_vazia_ps(PILHA_SEQ *p){
+    return p->TOPO < 0;
+}
+
+void push_ps(PILHA_SEQ *p, int v){
+    if (p->TOPO == MAX-1)
+        return;
+    p->val[++(p->TOPO)] = v;
+}
+
+int top_ps(PILHA_SEQ *p){
+    if (eh_vazia_ps(p))
+        return;
+    return p->val[p->TOPO];
+}
+
+void pop_ps(PILHA_SEQ *p){
+    if (eh_vazia_ps(p))
+        return;
+    p->TOPO--;
+}
+
+int top_pop_ps(PILHA_SEQ *p){
+    if (eh_vazia_ps(p))
+        return;
+    return p->val[p->TOPO--];
+}
+
+void inverter_fila(FILA_SEQ *f){
+    PILHA_SEQ p;
+    criar_pilha_s(&p);
+    while (!eh_vazia_fs(f))
+        push_ps(&p, cons_ret_fs(f));
+    while (!eh_vazia_ps(&p))
+        ins_fs(f, top_pop_ps(&p));
+}
+
+// PILHA ENCADEADA
 
 typedef struct nodo{
     int inf;
-    struct nodo *prox;
-    struct nodo *ant;
+    struct nodo * next;
 }NODO;
 
-typedef NODO *LISTA_DUP_ENC;
+typedef NODO * PILHA_ENC;
 
-void criar_lista(LISTA_DUP_ENC *l){
-    *l = NULL;
+void create(PILHA_ENC *p){
+    *p = NULL;
 }
 
-int eh_vazia(LISTA_DUP_ENC l){
-    return !l;
+int is_empty(PILHA_ENC p){
+    return !p;
 }
 
-int tam(LISTA_DUP_ENC l){
-    int tam;
-    for (tam=0; l; l = l->prox, tam++);
-    return tam;
-}
-
-void ins(LISTA_DUP_ENC *l, int v, int k){
+void push_pe(PILHA_ENC *p, int v){
     NODO *novo;
-    if (k < 1 || k > tam(*l)+1)
-        return;
     novo = (NODO*) malloc(sizeof(NODO));
     if (!novo)
         return;
     novo->inf = v;
-    if (k == 1){
-        novo->ant = NULL;
-        novo->prox = *l;
-        *l = novo;
-        if (novo->prox)
-            novo->prox->ant = novo;
-    } else {
-        NODO *aux;
-        for (aux = *l; k > 2; k--, aux = aux->prox);
-        novo->prox = aux->prox;
-        aux->prox = novo;
-        novo->ant = aux;
-        if (novo->prox)
-            novo->prox->ant = novo;
-    }
+    novo->next = *p;
+    *p = novo;
 }
 
-int recup(LISTA_DUP_ENC l, int k){
-    if (k < 1 || k > tam(l))
+int top_pe(PILHA_ENC p){
+    if (!p)
         return;
-    for (; k > 1; k--, l = l->prox);
-    return l->inf;
+    return p->inf;
 }
 
-void ret(LISTA_DUP_ENC *l, int k){
-    NODO *aux = *l;
-    if (k < 1 || k > tam(*l))
+void pop_pe(PILHA_ENC *p){
+    if (!*p)
         return;
-    if (k == 1){
-        *l = aux->prox;
-        if (aux->prox)
-            aux->prox->ant = NULL;
-        free(aux);
-    } else {
-        for (; k > 1; k--, aux = aux->prox);
-        aux->ant->prox = aux->prox;
-        if (aux->prox)
-            aux->prox->ant = aux->ant;
+    else {
+        NODO *aux = *p;
+        *p = aux->next;
         free(aux);
     }
 }
 
-void destruir(LISTA_DUP_ENC l){
+int top_pop_pe(PILHA_ENC *p){
+    if (!*p)
+        return;
+    else {
+        NODO *aux = *p;
+        int v = aux->inf;
+        *p = aux->next;
+        free(aux);
+        return v;
+    }
+}
+
+void destroy(PILHA_ENC p){
     NODO *aux;
-    while (l){
-        aux = l;
-        l = l->prox;
+    while (p){
+        aux = p;
+        p = p->next;
         free(aux);
-    }
-}
-
-void inverter_lista(LISTA_DUP_ENC *l){
-    NODO *aux = *l;
-    while (aux){
-        aux = (*l)->prox;
-        (*l)->prox = (*l)->ant;
-        (*l)->ant = aux;
-        if
     }
 }

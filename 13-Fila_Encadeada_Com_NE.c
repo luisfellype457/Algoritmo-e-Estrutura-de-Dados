@@ -3,25 +3,27 @@
 
 typedef struct nodo{
     int inf;
-    struct nodo *next;
+    struct nodo * next;
 }NODO;
 
 typedef struct{
+    int ne;
     NODO *INICIO;
     NODO *FIM;
 }DESCRITOR;
 
-typedef DESCRITOR * FILA_ENC;
+typedef DESCRITOR *FILA_ENC;
 
 void criar_fila(FILA_ENC *f){
     *f = (FILA_ENC) malloc(sizeof(DESCRITOR));
     if (!*f)
         return;
-    (*f)->INICIO = (*f)->FIM = NULL;
+    (*f)->FIM = (*f)->INICIO = NULL;
+    (*f)->ne = 0;
 }
 
 int eh_vazia(FILA_ENC f){
-    return !f->INICIO;
+    return !f->ne;
 }
 
 void ins(FILA_ENC f, int v){
@@ -31,21 +33,22 @@ void ins(FILA_ENC f, int v){
         return;
     novo->inf = v;
     novo->next = NULL;
-    if (eh_vazia(f))
+    if (!f->ne)
         f->INICIO = novo;
     else
         f->FIM->next = novo;
     f->FIM = novo;
+    f->ne++;
 }
 
 int cons(FILA_ENC f){
-    if (eh_vazia(f))
+    if (!f->ne)
         return;
     return f->INICIO->inf;
 }
 
 void ret(FILA_ENC f){
-    if (eh_vazia(f))
+    if (!f->ne)
         return;
     else {
         NODO *aux = f->INICIO;
@@ -53,11 +56,12 @@ void ret(FILA_ENC f){
         if (!f->INICIO)
             f->FIM = NULL;
         free(aux);
+        f->ne--;
     }
 }
 
 int cons_ret(FILA_ENC f){
-    if (eh_vazia(f))
+    if (!f->ne)
         return;
     else {
         NODO *aux = f->INICIO;
@@ -67,6 +71,7 @@ int cons_ret(FILA_ENC f){
             f->FIM = NULL;
         free(aux);
         return v;
+        f->ne--;
     }
 }
 
