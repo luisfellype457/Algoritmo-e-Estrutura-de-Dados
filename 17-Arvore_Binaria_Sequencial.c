@@ -74,6 +74,10 @@ void setright(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
+inf info(ARV_BIN_SEQ *t, int p){
+    return t->nodes[p].info;
+}
+
 int left(ARV_BIN_SEQ *t, int p){
     return t->nodes[p].left;
 }
