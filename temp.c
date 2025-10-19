@@ -5,9 +5,9 @@
 #define MAX 100
 
 typedef struct {
-    int N;
     int INICIO;
     int FIM;
+    int N;
     int val[MAX];
 }FILA_SEQ;
 
@@ -46,7 +46,7 @@ void ret_fs(FILA_SEQ *f){
 }
 
 int cons_ret_fs(FILA_SEQ *f){
-    if (eh_vazia_fs(f))
+    if (!f->N)
         return;
     else {
         int v = f->val[f->INICIO];
@@ -56,14 +56,14 @@ int cons_ret_fs(FILA_SEQ *f){
     }
 }
 
-void gera_fila_s(FILA_SEQ *f, int m, int n){
+void gera_fila(FILA_SEQ *f, int m, int n){
     if (m > n)
         return;
     if (m == n){
         criar_fila_s(f);
         ins_fs(f, m);
     } else {
-        gera_fila_s(f, m, n-1);
+        gera_fila(f, m, n-1);
         ins_fs(f, n);
     }
 }
@@ -167,7 +167,7 @@ int eh_vazia_ps(PILHA_SEQ *p){
 void push_ps(PILHA_SEQ *p, int v){
     if (p->TOPO == MAX-1)
         return;
-    p->val[++(p->TOPO)] = v;
+    p->val[++p->TOPO] = v;
 }
 
 int top_ps(PILHA_SEQ *p){
@@ -191,9 +191,9 @@ int top_pop_ps(PILHA_SEQ *p){
 void inverter_fila(FILA_SEQ *f){
     PILHA_SEQ p;
     criar_pilha_s(&p);
-    while (!eh_vazia_fs(f))
+    while(!eh_vazia_fs(f))
         push_ps(&p, cons_ret_fs(f));
-    while (!eh_vazia_ps(&p))
+    while(!eh_vazia_ps(&p))
         ins_fs(f, top_pop_ps(&p));
 }
 
@@ -215,13 +215,13 @@ int is_empty(PILHA_ENC p){
 }
 
 void push_pe(PILHA_ENC *p, int v){
-    NODO *novo;
-    novo = (NODO*) malloc(sizeof(NODO));
-    if (!novo)
+    NODO *new;
+    new = (NODO*) malloc(sizeof(NODO));
+    if (!new)
         return;
-    novo->inf = v;
-    novo->next = *p;
-    *p = novo;
+    new->inf = v;
+    new->next = *p;
+    *p = new;
 }
 
 int top_pe(PILHA_ENC p){
@@ -252,15 +252,6 @@ int top_pop_pe(PILHA_ENC *p){
     }
 }
 
-void destroy(PILHA_ENC p){
-    NODO *aux;
-    while (p){
-        aux = p;
-        p = p->next;
-        free(aux);
-    }
-}
-
 // ÁRVORE BINÁRIA SEQUENCIAL
 
 #define NUMNODES 100
@@ -280,7 +271,7 @@ typedef struct {
 
 void maketree(ARV_BIN_SEQ *t, int x){
     int i, ind;
-    for (i=0; i < NUMNODES-1; i++)
+    for (i = 0; i < NUMNODES-1; i++)
         t->nodes[i].left = i+1;
     t->nodes[i].left = -1;
     t->nodeFree = 0;
@@ -299,7 +290,7 @@ void maketree(ARV_BIN_SEQ *t, int x){
 int getNode(ARV_BIN_SEQ *t){
     if (t->nodeFree != -1){
         int i = t->nodeFree;
-        t->nodeFree = t->nodes[i].left;
+        t->nodeFree = t->nodes[t->nodeFree].left;
         return i;
     } else {
         return -1;
@@ -372,7 +363,9 @@ int isleft(ARV_BIN_SEQ *t, int p){
 }
 
 int isright(ARV_BIN_SEQ *t, int p){
-    if (father(t,p) != -1)
-        return !isleft;
+    if (father(t, p) != -1)
+        return !isleft(t, p);
     return 0;
 }
+
+
