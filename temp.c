@@ -71,7 +71,7 @@ void gera_fila(FILA_SEQ *f, int m, int n){
 // FILA ENCADEADA
 
 typedef struct nodo {
-    int inf;
+    int info;
     struct nodo * next;
 }NODO;
 
@@ -98,7 +98,7 @@ void ins_fe(FILA_ENC f, int v){
     novo = (NODO*) malloc(sizeof(NODO));
     if (!novo)
         return;
-    novo->inf = v;
+    novo->info = v;
     novo->next = NULL;
     if (eh_vazia_fe(f))
         f->INICIO = novo;
@@ -110,7 +110,7 @@ void ins_fe(FILA_ENC f, int v){
 int cons_fe(FILA_ENC f){
     if (eh_vazia_fe(f))
         return;
-    return f->INICIO->inf;
+    return f->INICIO->info;
 }
 
 void ret_fe(FILA_ENC f){
@@ -130,7 +130,7 @@ int cons_ret_fe(FILA_ENC f){
         return;
     else {
         NODO *aux = f->INICIO;
-        int v = aux->inf;
+        int v = aux->info;
         f->INICIO = aux->next;
         if (!f->INICIO)
             f->FIM = NULL;
@@ -200,7 +200,7 @@ void inverter_fila(FILA_SEQ *f){
 // PILHA ENCADEADA
 
 typedef struct nodo{
-    int inf;
+    int info;
     struct nodo * next;
 }NODO;
 
@@ -219,7 +219,7 @@ void push_pe(PILHA_ENC *p, int v){
     new = (NODO*) malloc(sizeof(NODO));
     if (!new)
         return;
-    new->inf = v;
+    new->info = v;
     new->next = *p;
     *p = new;
 }
@@ -227,7 +227,7 @@ void push_pe(PILHA_ENC *p, int v){
 int top_pe(PILHA_ENC p){
     if (!p)
         return;
-    return p->inf;
+    return p->info;
 }
 
 void pop_pe(PILHA_ENC *p){
@@ -245,7 +245,7 @@ int top_pop_pe(PILHA_ENC *p){
         return;
     else {
         NODO *aux = *p;
-        int v = aux->inf;
+        int v = aux->info;
         *p = aux->next;
         free(aux);
         return v;
@@ -269,7 +269,7 @@ typedef struct {
     NODE nodes[NUMNODES];
 }ARV_BIN_SEQ;
 
-void maketree(ARV_BIN_SEQ *t, int x){
+void maketree_s(ARV_BIN_SEQ *t, int x){
     int i, ind;
     for (i = 0; i < NUMNODES-1; i++)
         t->nodes[i].left = i+1;
@@ -302,7 +302,7 @@ void freeNode(ARV_BIN_SEQ *t, int node){
     t->nodeFree = node;
 }
 
-void setleft(ARV_BIN_SEQ *t, int p, int x){
+void setleft_s(ARV_BIN_SEQ *t, int p, int x){
     int ind = getNode(t);
     if (ind != -1){
         t->nodes[p].left = ind;
@@ -315,7 +315,7 @@ void setleft(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
-void setright(ARV_BIN_SEQ *t, int p, int x){
+void setright_s(ARV_BIN_SEQ *t, int p, int x){
     int ind = getNode(t);
     if (ind != -1){
         t->nodes[p].right = ind;
@@ -328,32 +328,31 @@ void setright(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
-int info(ARV_BIN_SEQ *t, int p){
+int info_s(ARV_BIN_SEQ *t, int p){
     return t->nodes[p].info;
 }
 
-int left(ARV_BIN_SEQ *t, int p){
+int left_s(ARV_BIN_SEQ *t, int p){
     return t->nodes[p].left;
 }
 
-int right(ARV_BIN_SEQ *t, int p){
+int right_s(ARV_BIN_SEQ *t, int p){
     return t->nodes[p].right;
 }
 
-int father(ARV_BIN_SEQ *t, int p){
+int father_s(ARV_BIN_SEQ *t, int p){
     return t->nodes[p].father;
 }
 
-int brother(ARV_BIN_SEQ *t, int p){
+int brother_s(ARV_BIN_SEQ *t, int p){
     if (father(t, p) != -1)
         if (isleft(t, p))
             return right(t, father(t, p));
         else
             return t->nodes[t->nodes[p].father].left;
-    return -1;
 }
 
-int isleft(ARV_BIN_SEQ *t, int p){
+int isleft_s(ARV_BIN_SEQ *t, int p){
     int q = father(t, p);
     if (q == -1)
         return 0;
@@ -362,7 +361,7 @@ int isleft(ARV_BIN_SEQ *t, int p){
     return 0;
 }
 
-int isright(ARV_BIN_SEQ *t, int p){
+int isright_s(ARV_BIN_SEQ *t, int p){
     if (father(t, p) != -1)
         return !isleft(t, p);
     return 0;
@@ -372,10 +371,10 @@ int isright(ARV_BIN_SEQ *t, int p){
 
 typedef struct node {
     int info;
-    struct node *left;
-    struct node *right;
-    struct node *father;
-} NODE;
+    struct node * father;
+    struct node * left;
+    struct node * right;
+}NODE;
 
 typedef NODE * ARV_BIN_ENC;
 
@@ -431,8 +430,7 @@ ARV_BIN_ENC brother(ARV_BIN_ENC t){
             return t->father->right;
         else
             return t->father->left;
-    else
-        return NULL;
+    return NULL;
 }
 
 int isleft(ARV_BIN_ENC t){
@@ -448,4 +446,19 @@ int isright(ARV_BIN_ENC t){
     if (t->father)
         return !isleft(t);
     return 0;
+}
+
+void percursoEmLargura(ARV_BIN_ENC arvore){
+    FILA_ENC fila;
+    criar_fila_e(&fila);
+    if (arvore)
+        ins_fe(fila, arvore);
+    while (!eh_vazia_fe(fila)){
+        printf("%d ", info(cons_fe(fila)));
+        if (left(cons_fe(fila)))
+            ins_fe(fila, left(cons_fe(fila)));
+        if (right(cons_fe(fila)))
+            ins_fe(fila, right(cons_fe(fila)));
+        ret(fila);
+    }
 }
