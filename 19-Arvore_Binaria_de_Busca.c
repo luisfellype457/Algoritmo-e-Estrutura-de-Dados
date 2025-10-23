@@ -84,5 +84,26 @@ int isright(ARV_BIN_BUSCA t){
 }
 
 void ins_ele(ARV_BIN_BUSCA *arv, int v){
-    
+    if (!*arv)
+        maketree(*arv, v);
+    else {
+        ARV_BIN_BUSCA father = *arv;
+        do {
+            if (father->info > v){
+                if (father->left)
+                    father = father->left;
+                else {
+                    setleft(father, v);
+                    break;
+                }
+            } else {
+                if (father->right)
+                    father = father->right;
+                else {
+                    setright(father, v);
+                    break;
+                }
+            }
+        } while(1);
+    }
 }
