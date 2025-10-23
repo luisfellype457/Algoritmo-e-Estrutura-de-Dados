@@ -1,3 +1,5 @@
+// CÓDIGO SOBRE PILHA ENCADEADA
+
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -1,3 +1,5 @@
+// CÓDIGO SOBRE PILHA SEQUENCIAL
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "11-Fila_Sequencial.c"

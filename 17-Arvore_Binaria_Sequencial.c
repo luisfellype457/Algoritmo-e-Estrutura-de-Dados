@@ -1,3 +1,5 @@
+// CÓDIGO SOBRE ÁRVORE BINÁRIA SEQUENCIAL
+
 #include <stdio.h>
 #include <stdlib.h>
 #define NUMNODES 100

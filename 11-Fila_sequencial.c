@@ -1,3 +1,5 @@
+// CÓDIGO SOBRE FILA SEQUENCIAL
+
 #include <stdio.h>
 #include <stdlib.h>
 #define MAX 100

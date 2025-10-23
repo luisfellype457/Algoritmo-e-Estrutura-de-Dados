@@ -46,7 +46,7 @@ void ret_fs(FILA_SEQ *f){
 }
 
 int cons_ret_fs(FILA_SEQ *f){
-    if (!f->N)
+    if (eh_vazia_fs(f))
         return;
     else {
         int v = f->val[f->INICIO];
@@ -94,17 +94,17 @@ int eh_vazia_fe(FILA_ENC f){
 }
 
 void ins_fe(FILA_ENC f, int v){
-    NODO *novo;
-    novo = (NODO*) malloc(sizeof(NODO));
-    if (!novo)
+    NODO *new;
+    new = (NODO*) malloc(sizeof(NODO));
+    if (!new)
         return;
-    novo->info = v;
-    novo->next = NULL;
+    new->info = v;
+    new->next = NULL;
     if (eh_vazia_fe(f))
-        f->INICIO = novo;
+        f->INICIO = new;
     else
-        f->FIM->next = novo;
-    f->FIM = novo;
+        f->FIM->next = new;
+    f->FIM = new;
 }
 
 int cons_fe(FILA_ENC f){
@@ -201,7 +201,7 @@ void inverter_fila(FILA_SEQ *f){
 
 typedef struct nodo{
     int info;
-    struct nodo * next;
+    struct nodo * next;    
 }NODO;
 
 typedef NODO * PILHA_ENC;
@@ -249,6 +249,15 @@ int top_pop_pe(PILHA_ENC *p){
         *p = aux->next;
         free(aux);
         return v;
+    }
+}
+
+void destroy(PILHA_ENC p){
+    NODO *aux;
+    while(p){
+        aux = p;
+        p = p->next;
+        free(aux);        
     }
 }
 
@@ -328,42 +337,39 @@ void setright_s(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
-int info_s(ARV_BIN_SEQ *t, int p){
-    return t->nodes[p].info;
+int info_s(ARV_BIN_SEQ *t, int n){
+    return t->nodes[n].info;
 }
 
-int left_s(ARV_BIN_SEQ *t, int p){
-    return t->nodes[p].left;
+int left(ARV_BIN_SEQ *t, int n){
+    return t->nodes[n].left;
 }
 
-int right_s(ARV_BIN_SEQ *t, int p){
-    return t->nodes[p].right;
+int right(ARV_BIN_SEQ *t, int n){
+    return t->nodes[n].right;
 }
 
-int father_s(ARV_BIN_SEQ *t, int p){
-    return t->nodes[p].father;
-}
-
-int brother_s(ARV_BIN_SEQ *t, int p){
-    if (father(t, p) != -1)
-        if (isleft(t, p))
-            return right(t, father(t, p));
+int brother(ARV_BIN_SEQ *t, int n){
+    if (father(t, n) != -1)
+        if (isleft(t, n))
+            return right(t, father(t, n));
         else
-            return t->nodes[t->nodes[p].father].left;
+            return t->nodes[t->nodes[n].father].left;
+    return -1;
 }
 
-int isleft_s(ARV_BIN_SEQ *t, int p){
-    int q = father(t, p);
+int isleft(ARV_BIN_SEQ *t, int n){
+    int q = father(t, n);
     if (q == -1)
         return 0;
-    if (left(t, q) == p)
+    if (left(t, q) == n)
         return 1;
     return 0;
 }
 
-int isright_s(ARV_BIN_SEQ *t, int p){
-    if (father(t, p) != -1)
-        return !isleft(t, p);
+int isright(ARV_BIN_SEQ *t, int n){
+    if (father(t, n) != -1)
+        return !isleft(t, n);
     return 0;
 }
 
@@ -378,7 +384,7 @@ typedef struct node {
 
 typedef NODE * ARV_BIN_ENC;
 
-void maketree(ARV_BIN_ENC *t, int x){
+void maketree_e(ARV_BIN_ENC *t, int x){
     *t = (NODE*) malloc(sizeof(NODE));
     if (!*t)
         return;
@@ -388,7 +394,7 @@ void maketree(ARV_BIN_ENC *t, int x){
     (*t)->right = NULL;
 }
 
-void setleft(ARV_BIN_ENC t, int x){
+void setleft_e(ARV_BIN_ENC t, int x){
     t->left = (NODE*) malloc(sizeof(NODE));
     if (!t->left)
         return;
@@ -398,7 +404,7 @@ void setleft(ARV_BIN_ENC t, int x){
     t->left->right = NULL;
 }
 
-void setright(ARV_BIN_ENC t, int x){
+void setright_e(ARV_BIN_ENC t, int x){
     t->right = (NODE*) malloc(sizeof(NODE));
     if (!t->right)
         return;
@@ -408,7 +414,7 @@ void setright(ARV_BIN_ENC t, int x){
     t->right->right = NULL;
 }
 
-int info(ARV_BIN_ENC t){
+int info_e(ARV_BIN_ENC t){
     return t->info;
 }
 
@@ -454,11 +460,37 @@ void percursoEmLargura(ARV_BIN_ENC arvore){
     if (arvore)
         ins_fe(fila, arvore);
     while (!eh_vazia_fe(fila)){
-        printf("%d ", info(cons_fe(fila)));
+        printf("%d ", info_e(cons_fe(fila)));
         if (left(cons_fe(fila)))
             ins_fe(fila, left(cons_fe(fila)));
         if (right(cons_fe(fila)))
             ins_fe(fila, right(cons_fe(fila)));
-        ret(fila);
+        ret_fe(fila);
     }
 }
+
+void percursoPreOrdem(ARV_BIN_ENC arvore){
+    if (arvore){
+        printf("%d ", info_e(arvore));
+        percursoPreOrdem(left(arvore));
+        percursoPreOrdem(right(arvore));
+    }
+}
+
+void percursoInOrdem(ARV_BIN_ENC arvore){
+    if (arvore){
+        percursoInOrdem(left(arvore));
+        printf("%d ", info_e(arvore));
+        percursoInOrdem(right(arvore));
+    }
+}
+
+void percursoPosOrdem(ARV_BIN_ENC arvore){
+    if (arvore){
+        percursoPosOrdem(left(arvore));
+        percursoPosOrdem(right(arvore));
+        printf("%d ", info_e(arvore));
+    }
+}
+
+
