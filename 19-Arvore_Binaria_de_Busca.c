@@ -107,3 +107,29 @@ void ins_ele(ARV_BIN_BUSCA *arv, int v){
         } while(1);
     }
 }
+
+void remocaoPorFusao(ARV_BIN_BUSCA *arvore){
+    if (*arvore){
+        ARV_BIN_BUSCA tmp = *arvore;
+        if (!(*arvore)->right){
+            if ((*arvore)->left)
+                (*arvore)->left->father = (*arvore)->father;
+            *arvore = (*arvore)->left;
+        } else {
+            if (!(*arvore)->left){
+                (*arvore)->right->father = (*arvore)->father;
+                *arvore = (*arvore)->right;
+            } else {
+                tmp = (*arvore)->left;
+                while (tmp->right)
+                    tmp = tmp->right;
+                tmp->right = (*arvore)->right;
+                tmp->right->father = tmp;
+                tmp = *arvore;
+                *arvore = tmp->left;
+                (*arvore)->father = tmp->father;
+            }
+        }
+        free(tmp);
+    }
+}

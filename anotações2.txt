@@ -121,7 +121,48 @@
         free(aux)
 
 
--árvores binárias (estat. e sequenc)
--árvores binárias (dinam. encad.)
+- ÁRVORE BINÁRIA SEQUENCIAL:
+
+    maketree(*t, x)
+    - getNode(*t)
+    - freeNode(*t, node)
+    setleft(*t, p, x)
+    setright(*t)
+    info(*t, p)
+    left(*t, p)
+    right(*t, p)
+    father(*t, p)
+    brother(*t, p)
+    isleft(*t, p)
+    isright(*t, p)
+
+
+- ÁRVORE BINÁRIA ENCADEADA:
+
+    maketree(*t, x) // aloca memória
+    setleft(t, x) // aloca t->left
+    setright(t, x) // aloca t->right
+    info(t)
+    left(t)
+    right(t)
+    father(t)
+    brother(t)
+    isleft(t)
+    isright(t)
+    
+    percursoEmLargura(t):
+        fila de árvores
+    percursoPreOrdem(t)
+    percursoInOrdem(t)
+    percursoPosOrdem(t)
+
+
+- ÁRVORE BINÁRIA DE BUSCA:
+    
+    ARV_BIN_ENC -> ARB_BIN_BUSCA
+
+    ins_ele(*arv, v)
+    
+
 -árvores balanceadas
 -árvore AVL
