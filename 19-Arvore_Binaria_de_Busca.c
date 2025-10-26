@@ -133,3 +133,34 @@ void remocaoPorFusao(ARV_BIN_BUSCA *arvore){
         free(tmp);
     }
 }
+
+void remocaoPorCopia(ARV_BIN_BUSCA *arvore){
+    if (*arvore){
+        ARV_BIN_BUSCA tmp = *arvore;
+        if (!tmp->right){
+            if (tmp->left)
+                tmp->left->father = tmp->father;
+            *arvore = tmp->left;
+        } else {
+            if (!tmp->left){
+                tmp->right->father = tmp->father;
+                *arvore = tmp->right;
+            } else {
+                tmp = tmp->right;
+                while (tmp->left)
+                    tmp = tmp->left;
+                (*arvore)->info = tmp->info;
+                if (tmp->father == *arvore){
+                    (*arvore)->right = tmp->right;
+                    if (tmp->right)
+                        tmp->right->father = *arvore;
+                } else {
+                    tmp->father->left = tmp->right;
+                    if (tmp->right)
+                        tmp->right->father = tmp->father;
+                }
+            }
+        }
+        free(tmp);
+    }
+}

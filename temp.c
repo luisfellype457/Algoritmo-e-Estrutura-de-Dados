@@ -311,7 +311,7 @@ void freeNode(ARV_BIN_SEQ *t, int node){
     t->nodeFree = node;
 }
 
-void setleft_s(ARV_BIN_SEQ *t, int p, int x){
+void setleft(ARV_BIN_SEQ *t, int p, int x){
     int ind = getNode(t);
     if (ind != -1){
         t->nodes[p].left = ind;
@@ -324,7 +324,7 @@ void setleft_s(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
-void setright_s(ARV_BIN_SEQ *t, int p, int x){
+void setright(ARV_BIN_SEQ *t, int p, int x){
     int ind = getNode(t);
     if (ind != -1){
         t->nodes[p].right = ind;
@@ -337,7 +337,7 @@ void setright_s(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
-int info_s(ARV_BIN_SEQ *t, int n){
+int info(ARV_BIN_SEQ *t, int n){
     return t->nodes[n].info;
 }
 
@@ -347,6 +347,10 @@ int left(ARV_BIN_SEQ *t, int n){
 
 int right(ARV_BIN_SEQ *t, int n){
     return t->nodes[n].right;
+}
+
+int father(ARV_BIN_SEQ *t, int n){
+    return t->nodes[n].father;
 }
 
 int brother(ARV_BIN_SEQ *t, int n){
@@ -384,7 +388,7 @@ typedef struct node {
 
 typedef NODE * ARV_BIN_ENC;
 
-void maketree_e(ARV_BIN_ENC *t, int x){
+void maketree(ARV_BIN_ENC *t, int x){
     *t = (NODE*) malloc(sizeof(NODE));
     if (!*t)
         return;
@@ -394,7 +398,7 @@ void maketree_e(ARV_BIN_ENC *t, int x){
     (*t)->right = NULL;
 }
 
-void setleft_e(ARV_BIN_ENC t, int x){
+void setleft(ARV_BIN_ENC t, int x){
     t->left = (NODE*) malloc(sizeof(NODE));
     if (!t->left)
         return;
@@ -404,7 +408,7 @@ void setleft_e(ARV_BIN_ENC t, int x){
     t->left->right = NULL;
 }
 
-void setright_e(ARV_BIN_ENC t, int x){
+void setright(ARV_BIN_ENC t, int x){
     t->right = (NODE*) malloc(sizeof(NODE));
     if (!t->right)
         return;
@@ -414,7 +418,7 @@ void setright_e(ARV_BIN_ENC t, int x){
     t->right->right = NULL;
 }
 
-int info_e(ARV_BIN_ENC t){
+int info(ARV_BIN_ENC t){
     return t->info;
 }
 
@@ -460,7 +464,7 @@ void percursoEmLargura(ARV_BIN_ENC arvore){
     if (arvore)
         ins_fe(fila, arvore);
     while (!eh_vazia_fe(fila)){
-        printf("%d ", info_e(cons_fe(fila)));
+        printf("%d ", info(cons_fe(fila)));
         if (left(cons_fe(fila)))
             ins_fe(fila, left(cons_fe(fila)));
         if (right(cons_fe(fila)))
@@ -471,7 +475,7 @@ void percursoEmLargura(ARV_BIN_ENC arvore){
 
 void percursoPreOrdem(ARV_BIN_ENC arvore){
     if (arvore){
-        printf("%d ", info_e(arvore));
+        printf("%d ", info(arvore));
         percursoPreOrdem(left(arvore));
         percursoPreOrdem(right(arvore));
     }
@@ -480,7 +484,7 @@ void percursoPreOrdem(ARV_BIN_ENC arvore){
 void percursoInOrdem(ARV_BIN_ENC arvore){
     if (arvore){
         percursoInOrdem(left(arvore));
-        printf("%d ", info_e(arvore));
+        printf("%d ", info(arvore));
         percursoInOrdem(right(arvore));
     }
 }
@@ -489,8 +493,90 @@ void percursoPosOrdem(ARV_BIN_ENC arvore){
     if (arvore){
         percursoPosOrdem(left(arvore));
         percursoPosOrdem(right(arvore));
-        printf("%d ", info_e(arvore));
+        printf("%d ", info(arvore));
     }
 }
 
+// ÁRVORE BINÁRIA DE BUSCA
 
+void ins_ele(ARV_BIN_ENC *arv, int v){
+    if (!*arv)
+        maketree(*arv, v);
+    else {
+        ARV_BIN_ENC father = *arv;
+        do {
+            if (father->info > v){
+                if (father->left)
+                    father = father->left;
+                else {
+                    setleft(father, v);
+                    break;
+                }
+            } else {
+                if (father->right)
+                    father = father->right;
+                else {
+                    setright(father, v);
+                    break;
+                }
+            }
+        } while(1);
+    }
+}
+
+void remocaoPorFusao(ARV_BIN_ENC *arvore){
+    if (*arvore){
+        ARV_BIN_ENC tmp = *arvore;
+        if (!tmp->right){
+            if (tmp->left)
+                tmp->left->father = tmp->father;
+            *arvore = tmp->left;
+        } else {
+            if (!tmp->left){
+                tmp->right->father = tmp->father;
+                *arvore = tmp->right;
+            } else {
+                tmp = tmp->left;
+                while (tmp->right)
+                    tmp = tmp->right;
+                tmp->right = (*arvore)->right;
+                tmp->right->father = tmp;
+                tmp = *arvore;
+                *arvore = tmp->left;
+                (*arvore)->father = tmp->father;
+            }
+        }
+        free(tmp);
+    }
+}
+
+void remocaoPorCopia(ARV_BIN_ENC *arvore){
+    if (*arvore){
+        ARV_BIN_ENC tmp = *arvore;
+        if (!tmp->right){
+            if (tmp->left)
+                tmp->left->father = tmp->father;
+            *arvore = tmp->left;
+        } else {
+            if (!tmp->left){
+                tmp->right->father = tmp->father;
+                *arvore = tmp->right;
+            } else {
+                tmp = tmp->right;
+                while (tmp->left)
+                    tmp = tmp->left;
+                (*arvore)->info = tmp->info;
+                if (tmp->father == *arvore){
+                    (*arvore)->right = tmp->right;
+                    if (tmp->right)
+                        tmp->right->father = *arvore;
+                } else {
+                    tmp->father->left = tmp->right;
+                    if (tmp->right)
+                        tmp->right->father = tmp->father;
+                }
+            }
+        }
+        free(tmp);
+    }
+}
