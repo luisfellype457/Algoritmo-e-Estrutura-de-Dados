@@ -161,8 +161,38 @@
     
     ARV_BIN_ENC -> ARB_BIN_BUSCA
 
-    ins_ele(*arv, v)
-    
+    ins_ele(*arv, v):
+        if(!*arv)
+        cria ponteiro tmp = *arv
+        do/while(1)
+        compara tmp->info com v
 
--árvores balanceadas
--árvore AVL
+    remocaoPorFusao(*arvore):
+        verifica se existe *arvore
+        cria ponteiro tmp = *arvore
+        1 - sem nó direito
+        2 - sem nó esquerdo
+        3 - com os dois nós:
+            desce para a esquerda
+            desce todas para a direita
+            faz a fusão
+        free(tmp)
+
+    remocaoPorCopia(*arvore):
+        mesmo procedimento
+        1 - //
+        2 - //
+        3 - com dois nós:
+            desce para a direita
+            desce todas para a esquerda
+            copia o valor
+            if (tmp->father == *arvore):
+                (*arvore)->right = tmp->right
+            else:
+                tmp->father->left = tmp->right
+        free(tmp)
+
+
+- ÁRVORE AVL:
+
+    

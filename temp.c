@@ -279,7 +279,7 @@ typedef struct {
 }ARV_BIN_SEQ;
 
 void maketree_s(ARV_BIN_SEQ *t, int x){
-    int i, ind;
+    int ind, i;
     for (i = 0; i < NUMNODES-1; i++)
         t->nodes[i].left = i+1;
     t->nodes[i].left = -1;
@@ -337,82 +337,78 @@ void setright(ARV_BIN_SEQ *t, int p, int x){
     }
 }
 
-int info(ARV_BIN_SEQ *t, int n){
-    return t->nodes[n].info;
+int info_s(ARV_BIN_SEQ *t, int p){
+    return t->nodes[p].info;
 }
 
-int left(ARV_BIN_SEQ *t, int n){
-    return t->nodes[n].left;
+int left(ARV_BIN_SEQ *t, int p){
+    return t->nodes[p].left;
 }
 
-int right(ARV_BIN_SEQ *t, int n){
-    return t->nodes[n].right;
+int right(ARV_BIN_SEQ *t, int p){
+    return t->nodes[p].right;
 }
 
-int father(ARV_BIN_SEQ *t, int n){
-    return t->nodes[n].father;
+int father(ARV_BIN_SEQ *t, int p){
+    return t->nodes[p].father;
 }
 
-int brother(ARV_BIN_SEQ *t, int n){
-    if (father(t, n) != -1)
-        if (isleft(t, n))
-            return right(t, father(t, n));
+int brother(ARV_BIN_SEQ *t, int p){
+    if (father(t, p) != -1)
+        if (isleft(t, p))
+            return right(t, father(t, p));
         else
-            return t->nodes[t->nodes[n].father].left;
+            return t->nodes[t->nodes[p].father].left;
     return -1;
 }
 
-int isleft(ARV_BIN_SEQ *t, int n){
-    int q = father(t, n);
+int isleft(ARV_BIN_SEQ *t, int p){
+    int q = father(t, p);
     if (q == -1)
         return 0;
-    if (left(t, q) == n)
+    if (left(t, q) == p)
         return 1;
     return 0;
 }
 
-int isright(ARV_BIN_SEQ *t, int n){
-    if (father(t, n) != -1)
-        return !isleft(t, n);
+int isright(ARV_BIN_SEQ *t, int p){
+    if (father(t, p) != -1)
+        return !isleft(t, p);
     return 0;
 }
 
 // ÁRVORE BINÁRIA ENCADEADA
 
-typedef struct node {
+typedef struct nodo {
     int info;
-    struct node * father;
-    struct node * left;
-    struct node * right;
-}NODE;
+    struct nodo *father, *left, *right;
+}NODO;
 
-typedef NODE * ARV_BIN_ENC;
+typedef NODO * ARV_BIN_ENC;
 
-void maketree(ARV_BIN_ENC *t, int x){
-    *t = (NODE*) malloc(sizeof(NODE));
+void maketree(ARV_BIN_ENC *t, int v){
+    *t = (NODO*) malloc(sizeof(NODO));
     if (!*t)
         return;
-    (*t)->info = x;
-    (*t)->father = NULL;
-    (*t)->left = NULL;
-    (*t)->right = NULL;
+    (*t)->info = v;
+    (*t)->father = (*t)->left = (*t)->right = NULL;
 }
 
-void setleft(ARV_BIN_ENC t, int x){
-    t->left = (NODE*) malloc(sizeof(NODE));
+void setleft(ARV_BIN_ENC t, int v){
+    t->left = (NODO*) malloc(sizeof(NODO));
     if (!t->left)
         return;
-    t->left->info = x;
+    t->left->info = v;
     t->left->father = t;
     t->left->left = NULL;
     t->left->right = NULL;
 }
 
-void setright(ARV_BIN_ENC t, int x){
-    t->right = (NODE*) malloc(sizeof(NODE));
+void setright(ARV_BIN_ENC t, int v){
+    t->right = (NODO*) malloc(sizeof(NODO));
     if (!t->right)
         return;
-    t->right->info = x;
+    t->right->info = v;
     t->right->father = t;
     t->right->left = NULL;
     t->right->right = NULL;
@@ -444,7 +440,7 @@ ARV_BIN_ENC brother(ARV_BIN_ENC t){
 }
 
 int isleft(ARV_BIN_ENC t){
-    NODE *q = t->father;
+    NODO *q = t->father;
     if (!q)
         return 0;
     if (q->left == t)
@@ -495,13 +491,13 @@ void percursoPosOrdem(ARV_BIN_ENC arvore){
         percursoPosOrdem(right(arvore));
         printf("%d ", info(arvore));
     }
-}
+} 
 
 // ÁRVORE BINÁRIA DE BUSCA
 
 void ins_ele(ARV_BIN_ENC *arv, int v){
     if (!*arv)
-        maketree(*arv, v);
+        maketree(arv, v);
     else {
         ARV_BIN_ENC father = *arv;
         do {
@@ -578,5 +574,78 @@ void remocaoPorCopia(ARV_BIN_ENC *arvore){
             }
         }
         free(tmp);
+    }
+}
+
+// ÁRVORE AVL
+
+typedef struct nodo {
+    int num, alte, altd;
+    struct nodo *esq, *dir;
+}NODO;
+
+typedef NODO * ARVORE_AVL;
+
+void rotacao_direita(ARVORE_AVL *arvore){
+    ARVORE_AVL aux1, aux2;
+    aux1 = (*arvore)->esq;
+    aux2 = aux1->dir;
+    (*arvore)->esq = aux2;
+    aux1->dir = *arvore;
+    if (!aux2)
+        (*arvore)->alte = 0;
+    else
+        if (aux2->alte > aux2->altd)
+            (*arvore)->alte = aux2->alte + 1;
+        else
+            (*arvore)->alte = aux2->altd + 1;
+    if ((*arvore)->alte > (*arvore)->altd)
+        aux1->altd = (*arvore)->alte + 1;
+    else
+        aux1->altd = (*arvore)->altd + 1;
+    *arvore = aux1;
+}
+
+void rotacao_esquerda(ARVORE_AVL *arvore){
+    ARVORE_AVL aux1, aux2;
+    aux1 = (*arvore)->dir;
+    aux2 = aux1->esq;
+    (*arvore)->dir = aux2;
+    aux1->dir = *arvore;
+    if (!aux2)
+        (*arvore)->altd = 0;
+    else
+        if (aux2->alte > aux2->altd)
+            (*arvore)->altd = aux2->alte + 1;
+        else
+            (*arvore)->altd = aux2->altd + 1;
+    if ((*arvore)->alte > (*arvore)->altd)
+        aux1->alte = (*arvore)->alte + 1;
+    else
+        aux1->alte = (*arvore)->altd + 1;
+    *arvore = aux1;
+}
+
+void balanceamento(ARVORE_AVL *arvore){
+    int FBpai, FBfilho;
+    FBpai = (*arvore)->altd - (*arvore)->alte;
+    if (FBpai == 2){
+        FBfilho = (*arvore)->dir->altd - (*arvore)->dir->alte;
+        if (FBfilho >= 0)
+            rotacao_esquerda(arvore);
+        else {
+            rotacao_direita(&(*arvore)->dir);
+            rotacao_esquerda(arvore);
+        }
+    } else {
+        if (FBpai == -2){
+            FBfilho = (*arvore)->esq->altd - (*arvore)->esq->alte;
+            if (FBfilho <= 0)
+                rotacao_direita(arvore);
+            else {
+                rotacao_esquerda(&(*arvore)->esq);
+                rotacao_direita(arvore);
+            }
+        }
     }
 }

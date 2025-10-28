@@ -83,11 +83,11 @@ int isright(ARV_BIN_BUSCA t){
     return 0;
 }
 
-void ins_ele(ARV_BIN_BUSCA *arv, int v){
-    if (!*arv)
-        maketree(*arv, v);
+void ins_ele(ARV_BIN_BUSCA *no, int v){
+    if (!*no)
+        maketree(no, v);
     else {
-        ARV_BIN_BUSCA father = *arv;
+        ARV_BIN_BUSCA father = *no;
         do {
             if (father->info > v){
                 if (father->left)
@@ -108,59 +108,59 @@ void ins_ele(ARV_BIN_BUSCA *arv, int v){
     }
 }
 
-void remocaoPorFusao(ARV_BIN_BUSCA *arvore){
-    if (*arvore){
-        ARV_BIN_BUSCA tmp = *arvore;
-        if (!(*arvore)->right){
-            if ((*arvore)->left)
-                (*arvore)->left->father = (*arvore)->father;
-            *arvore = (*arvore)->left;
+void remocaoPorFusao(ARV_BIN_BUSCA *no){
+    if (*no){
+        ARV_BIN_BUSCA aux = *no;
+        if (!aux->right){
+            if (aux->left)
+                aux->left->father = aux->father;
+            *no = aux->left;
         } else {
-            if (!(*arvore)->left){
-                (*arvore)->right->father = (*arvore)->father;
-                *arvore = (*arvore)->right;
+            if (!aux->left){
+                aux->right->father = aux->father;
+                *no = aux->right;
             } else {
-                tmp = (*arvore)->left;
-                while (tmp->right)
-                    tmp = tmp->right;
-                tmp->right = (*arvore)->right;
-                tmp->right->father = tmp;
-                tmp = *arvore;
-                *arvore = tmp->left;
-                (*arvore)->father = tmp->father;
+                aux = aux->left;
+                while (aux->right)
+                    aux = aux->right;
+                aux->right = (*no)->right;
+                aux->right->father = aux;
+                aux = *no;
+                *no = aux->left;
+                (*no)->father = aux->father;
             }
         }
-        free(tmp);
+        free(aux);
     }
 }
 
-void remocaoPorCopia(ARV_BIN_BUSCA *arvore){
-    if (*arvore){
-        ARV_BIN_BUSCA tmp = *arvore;
-        if (!tmp->right){
-            if (tmp->left)
-                tmp->left->father = tmp->father;
-            *arvore = tmp->left;
+void remocaoPorCopia(ARV_BIN_BUSCA *no){
+    if (*no){
+        ARV_BIN_BUSCA aux = *no;
+        if (!aux->right){
+            if (aux->left)
+                aux->left->father = aux->father;
+            *no = aux->left;
         } else {
-            if (!tmp->left){
-                tmp->right->father = tmp->father;
-                *arvore = tmp->right;
+            if (!aux->left){
+                aux->right->father = aux->father;
+                *no = aux->right;
             } else {
-                tmp = tmp->right;
-                while (tmp->left)
-                    tmp = tmp->left;
-                (*arvore)->info = tmp->info;
-                if (tmp->father == *arvore){
-                    (*arvore)->right = tmp->right;
-                    if (tmp->right)
-                        tmp->right->father = *arvore;
+                aux = (*no)->right;
+                while (aux->left)
+                    aux = aux->left;
+                (*no)->info = aux->info;
+                if (aux->father == *no){
+                    (*no)->right = aux->right;
+                    if (aux->right)
+                        aux->right->father = *no;
                 } else {
-                    tmp->father->left = tmp->right;
-                    if (tmp->right)
-                        tmp->right->father = tmp->father;
+                    aux->father->left = aux->right;
+                    if (aux->right)
+                        aux->right->father = aux->father;
                 }
             }
         }
-        free(tmp);
+        free(aux);
     }
 }
