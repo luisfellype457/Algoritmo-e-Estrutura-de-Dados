@@ -1,0 +1,11 @@
+- TABELA HASH:
+    
+    inicializarHash(tabela):
+        for (i < numEntradas) [i] = NULL
+    
+    funcaoHashing(num)
+    inserirHash(tabela, num)
+    mostrarHash(tabela, num)
+    Hash* localizarHash(tabela, num)
+    excluirHash(tabela, num)
+    liberarMemoria(tabela)

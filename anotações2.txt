@@ -195,4 +195,7 @@
 
 - ÁRVORE AVL:
 
-    
+    (mesmo tad arv_bin_busca)
+
+    rotacao_direita(*arvore)
+    rotacao_esquerda(*arvore)
