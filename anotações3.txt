@@ -1,4 +1,4 @@
-- TABELA HASH:
+- HASHING ABERTO:
     
     inicializarHash(tabela):
         for (i < numEntradas) [i] = NULL
@@ -9,3 +9,11 @@
     Hash* localizarHash(tabela, num)
     excluirHash(tabela, num)
     liberarMemoria(tabela)
+
+- HASHING FECHADO:
+    
+    int i=0;
+    int pos = hashing;
+    while(i < tam && tabela...)
+    (pos+i)%tam -> evitar que acesse área inacessível do vetor
+    if (i < tam)

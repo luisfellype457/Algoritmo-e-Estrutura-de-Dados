@@ -34,7 +34,7 @@ void inserirHash(TADTabelaHash tabela, int num){
 void mostrarHash(TADTabelaHash tabela){
     int i;
     Hash* atual;
-    for (i = 0; i < numEntradas; i++){
+    for (i=0; i < numEntradas; i++){
         if (tabela[i]){
             printf("[%d]", tabela[i]->chave);
             atual = tabela[i]->prox;
@@ -70,7 +70,7 @@ void excluirHash(TADTabelaHash tabela, int num){
     if (tabela[pos])
         if (tabela[pos]->chave == num){
             aux = tabela[pos];
-            tabela[pos]->prox = aux->prox;
+            tabela[pos] = aux->prox;
             free(aux);
         } else {
             Hash* ant;
@@ -94,10 +94,10 @@ void excluirHash(TADTabelaHash tabela, int num){
 void liberarMemoria(TADTabelaHash tabela){
     int i;
     Hash* aux;
-    for (i = 0; i < numEntradas; i++){
+    for (i=0; i < numEntradas; i++){
         while (tabela[i]){
             aux = tabela[i];
-            tabela[i] = aux->prox;                
+            tabela[i] = aux->prox;
             free(aux);
         }
     }
