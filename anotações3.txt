@@ -17,3 +17,14 @@
     while(i < tam && tabela...)
     (pos+i)%tam -> evitar que acesse área inacessível do vetor
     if (i < tam)
+
+- HASHING FECHADO QUADRATICO:
+
+    mesmo modo que o fechado
+
+    ponto principal:
+        while (k < tam...){
+            pos = (pos+k)%tam;
+            k = k+1;
+        }
+
