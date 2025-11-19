@@ -48,7 +48,7 @@ int buscarChave(TabelaHash tabela, int n){
     int i=0;
     while (i < tam && tabela[(pos+i)%tam].livre != 'L' && tabela[(pos+i)%tam].chave != n)
         i = i+1;
-    if (i < tam && tabela[(pos+i)%tam].livre != 'O' && tabela[(pos+i)%tam].chave == n)
+    if (i < tam && tabela[(pos+i)%tam].livre == 'O' && tabela[(pos+i)%tam].chave == n)
         return (pos+i)%tam;
     else
         return tam;
