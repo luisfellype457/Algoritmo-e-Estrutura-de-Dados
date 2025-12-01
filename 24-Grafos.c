@@ -37,12 +37,12 @@ int adjacenteP(struct arc adj[][MAXNODES], int node1, int node2){
 
 // GRAFOS - APLICAÇÃO
 
-int procurarCaminho(int adj[][MAXNODES], int n, int k, int a, int b){
+int procurarCaminho(int adj[][MAXNODES], int k, int a, int b){
     int c;
     if (k == 1)
         return adjacente(adj, a, b);
     for (c=0; c < n; ++c)
-        if (adjacente(adj, a, c) && procurarCaminho(adj, n, k-1, c, b))
+        if (adjacente(adj, a, c) && procurarCaminho(adj, k-1, c, b))
             return 1;
     return 0;
 }
@@ -63,6 +63,44 @@ int main(){
         if (city1 > -1 && city2 > -1)
             ligar(adj, city1, city2);
     }while (city1 > -1 && city2 > -1);
-    printf("\t%s\n\n", procurarCaminho(adj, n, nr, a, b) ? "confirmado" : "nop");
+    printf("\t%s\n\n", procurarCaminho(adj, nr, a, b) ? "confirmado" : "nop");
     return 0;
+}
+
+typedef struct nodetype{
+    int info;
+    int point;
+    int next;
+}tipoNodo;
+
+typedef tipoNodo listaDeNodos[MAXNODES];
+
+typedef struct nodetype{
+    int info;
+    struct nodetype *point;
+    struct nodetype *next;
+};
+
+struct nodetype *nodeptr;
+
+void joinwt(listaDeNodos node, int p, int q, int wt){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    if (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        node[r].info = wt;
+        return;
+    }
+    r = getnode(node);
+    node[r].info = wt;
+    node[r].next = -1;
+    node[r].point = q;
+    if (r2 < 0)
+        node[p].point = r;
+    else
+        node[r2].next = r;
 }
