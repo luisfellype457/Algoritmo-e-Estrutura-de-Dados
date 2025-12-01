@@ -71,6 +71,7 @@ typedef struct nodetype{
     int info;
     int point;
     int next;
+    char livre; // add
 }tipoNodo;
 
 typedef tipoNodo listaDeNodos[MAXNODES];
@@ -83,11 +84,19 @@ typedef struct nodetype{
 
 struct nodetype *nodeptr;
 
+int getnode(listaDeNodos node){
+    int i;
+    for (i=0; i < MAXNODES; ++i)
+        if (node[i].livre == 1)
+            return i;
+    return -1;
+}
+
 void joinwt(listaDeNodos node, int p, int q, int wt){
     int r, r2;
     r2 = -1;
     r = node[p].point;
-    if (r >= 0 && node[r].point != q){
+    while (r >= 0 && node[r].point != q){
         r2 = r;
         r = node[r].next;
     }
@@ -96,11 +105,104 @@ void joinwt(listaDeNodos node, int p, int q, int wt){
         return;
     }
     r = getnode(node);
+    if (r < 0)
+        printf("lista cheia\n");
+    else{
+        node[r].info = wt;
+        node[r].livre = 0;
+        node[r].point = q;
+        node[r].next = -1;
+        if (r2 < 0)
+            node[p].point = r;
+        else
+            node[r2].next = r;
+    }
+}
+
+//
+
+void inicializarGrafo(int *grafo, listaDeNodos node){
+    int i;
+    for (i=0; i < MAXNODES; ++i)
+        node[i].livre = 1;
+    *grafo = -1;
+}
+
+void criarListaDeNodos(int *listaDeNodosVazios, listaDeNodos node){
+    int i;
+    for (i=1; i < MAXNODES; ++i)
+        node[i-1].next = i;
+    node[i-1].next = -1;
+    *listaDeNodosVazios = 0;
+}
+
+int getnode2(int *listaDeNodosVazios, listaDeNodos node){
+    int i = *listaDeNodosVazios;
+    if (i != -1){
+        *listaDeNodosVazios = node[i].next;
+        return i;
+    } else {
+        printf("sem armazenamento\n");
+        exit(1);
+    }
+}
+
+void joinwt2(listaDeNodos node, int *listaDeNodosVazios, int p, int q, int wt){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        node[r].info = wt;
+        return;
+    }
+    r = getnode2(*listaDeNodosVazios, node);
     node[r].info = wt;
-    node[r].next = -1;
     node[r].point = q;
+    node[r].next = -1;
     if (r2 < 0)
         node[p].point = r;
     else
         node[r2].next = r;
+}
+
+//
+
+void join(listaDeNodos node, int *listaDeNodosVazios, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0)
+        return;
+    r = getnode2(*listaDeNodosVazios, node);
+    node[r].point = q;
+    node[r].next = -1;
+    if (r2 < 0)
+        node[p].point = r;
+    else
+        node[r2].next = r;
+}
+
+void remv(listaDeNodos node, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        if (r2 < 0)
+            node[p].point = node[r].next;
+        else
+            node[r2].next = node[r].next;
+        freenode(listaDeNodosVazios, node, r);
+    }
 }
