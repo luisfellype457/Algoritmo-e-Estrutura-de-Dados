@@ -3,32 +3,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define numEntradas 8
+#define tam 8
 
 typedef struct _Hash{
     int chave;
     struct _Hash * prox;
 }Hash;
 
-typedef Hash *TADTabelaHash[numEntradas];
+typedef Hash *TADTabelaHash[tam];
 
 void inicializarHash(TADTabelaHash tabela){
     int i;
-    for (i=0; i < numEntradas; i++)
+    for (i=0; i < tam; ++i)
         tabela[i] = NULL;
 }
 
 int funcaoHashing(int n){
-    return n % numEntradas;
+    return n % tam;
 }
 
-void inserirHash(TADTabelaHash tabela, int num){
-    int pos = funcaoHashing(num);
+void inserirHash(TADTabelaHash tabela, int n){
+    int pos = funcaoHashing(n);
     Hash *novo;
     novo = (Hash*) malloc(sizeof(Hash));
     if (!novo)
         return;
-    novo->chave = num;
+    novo->chave = n;
     novo->prox = tabela[pos];
     tabela[pos] = novo;
 }
@@ -36,7 +36,7 @@ void inserirHash(TADTabelaHash tabela, int num){
 void mostrarHash(TADTabelaHash tabela){
     int i;
     Hash *atual;
-    for (i=0; i < numEntradas; i++){
+    for (i=0; i < tam; ++i)
         if (tabela[i]){
             printf("[%d]", tabela[i]->chave);
             atual = tabela[i]->prox;
@@ -48,7 +48,6 @@ void mostrarHash(TADTabelaHash tabela){
         } else {
             printf("[ ]\n");
         }
-    }
 }
 
 Hash* localizarHash(TADTabelaHash tabela, int num){
@@ -63,7 +62,7 @@ Hash* localizarHash(TADTabelaHash tabela, int num){
             return aux;
         }
     else
-        return;
+        return NULL;
 }
 
 void excluirHash(TADTabelaHash tabela, int num){
@@ -84,17 +83,14 @@ void excluirHash(TADTabelaHash tabela, int num){
             if (aux){
                 ant->prox = aux->prox;
                 free(aux);
-            } else {
-                return;
             }
         }
-    else
-        return;
+    return;
 }
 
 void liberarMemoria(TADTabelaHash tabela){
     int i;
-    for (i=0; i < numEntradas; i++)
+    for (i=0; i < tam; ++i)
         while (tabela[i]){
             free(tabela[i]);
             tabela[i] = tabela[i]->prox;
@@ -103,54 +99,37 @@ void liberarMemoria(TADTabelaHash tabela){
 
 // HASHING FECHADO
 
-#define tam 8
-
 typedef struct{
     int chave;
     char livre;
 }HashF;
 
-typedef HashF Tabela[tam];
+typedef HashF TabelaF[tam];
 
-void inicializarHash(Tabela tabela){
+void inicializarTabelaF(TabelaF tabela){
     int i;
-    for (i=0; i < tam; i++)
+    for (i=0; i < tam; ++i)
         tabela[i].livre = 'L';
 }
 
-int funcaoHashing(int n){
-    return n % tam;
-}
-
-void mostrarHash(Tabela tabela){
-    int i;
-    for (i=0; i < tam; i++){
-        if (tabela[i].livre == 'O'){
-            printf("%d - [%d] O\n", i, tabela[i].chave);
-        } else {
-            printf("%d - [ ] %c\n", i, tabela[i].livre);
-        }
-    }
-}
-
-void inserirHash(Tabela tabela, int num){
-    int pos = funcaoHashing(num);
+void inserirHashF(TabelaF tabela, int n){
+    int pos = funcaoHashing(n);
     int i=0;
     while (i < tam && tabela[(pos+i)%tam].livre == 'O')
         i = i+1;
     if (i < tam){
         tabela[(pos+i)%tam].livre = 'O';
-        tabela[(pos+i)%tam].chave = num;
+        tabela[(pos+i)%tam].chave = n;
     } else {
         return;
     }
 }
 
-int buscarChave(Tabela tabela, int n){
+int buscarChave(TabelaF tabela, int n){
     int pos = funcaoHashing(n);
     int i=0;
-    while (i < tam && tabela[(pos+i)%tam].livre != 'L' &&
-    tabela[(pos+i)%tam].chave != n)
+    while (i < tam && tabela[(pos+i)%tam].chave != n && 
+    tabela[(pos+i)%tam].livre != 'L');
         i = i+1;
     if (i < tam && tabela[(pos+i)%tam].livre == 'O')
         return (pos+i)%tam;
@@ -158,7 +137,20 @@ int buscarChave(Tabela tabela, int n){
         return tam;
 }
 
-void removerChave(Tabela tabela, int n){
+void mostrarHashF(TabelaF tabela){
+    int i;
+    for (i=0; i < tam; ++i)
+        if (tabela[i].livre == 'L')
+            printf("[ ] L\n");
+        else {
+            if (tabela[i].livre == 'O')
+                printf("[%d] O\n", tabela[i].chave);
+            else
+                printf("[%d] R\n", tabela[i].chave);
+        }
+}
+
+void removerChave(TabelaF tabela, int n){
     int pos = buscarChave(tabela, n);
     if (pos < tam)
         tabela[pos].livre = 'R';
@@ -166,9 +158,9 @@ void removerChave(Tabela tabela, int n){
         return;
 }
 
- // HASHING FECHADO TENTATIVA QUADRÁTICA
+// HASHING FECHADO TENTATIVA QUADRÁTICA
 
-void inserir(Tabela tabela, int n){
+void inserirHashQ(TabelaF tabela, int n){
     int pos = funcaoHashing(n);
     int i=0;
     while (i < tam && tabela[pos].livre == 'O'){
@@ -182,10 +174,11 @@ void inserir(Tabela tabela, int n){
         return;
 }
 
-int buscarQ(Tabela tabela, int n){
+int buscarChaveQ(TabelaF tabela, int n){
     int pos = funcaoHashing(n);
     int i=0;
-    while (i < tam && tabela[pos].livre != 'L' && tabela[pos].chave != n){
+    while (i < tam && tabela[pos].chave != n &&
+    tabela[pos].livre != 'L'){
         pos = (pos+i)%tam;
         i = i+1;
     }
@@ -195,10 +188,198 @@ int buscarQ(Tabela tabela, int n){
         return tam;
 }
 
-void removerQ(Tabela tabela, int n){
-    int pos = buscarQ(tabela, n);
+void removerChaveQ(TabelaF tabela, int n){
+    int pos = buscarChave(tabela, n);
     if (pos < tam)
         tabela[pos].livre = 'R';
     else
         return;
+}
+
+// GRAFOS
+
+#define MAXNODES 10
+
+int adj[MAXNODES][MAXNODES];
+
+void ligar(int adj[][MAXNODES], int node1, int node2){
+    adj[node1][node2] = 1;
+}
+
+void remover(int adj[][MAXNODES], int node1, int node2){
+    adj[node1][node2] = 0;
+}
+
+int adjacente(int adj[][MAXNODES], int node1, int node2){
+    return adj[node1][node2];
+}
+
+int procurarCaminho(int adj[][MAXNODES], int k, int a, int b){
+    int c;
+    if (k == 1)
+        return adjacente(adj, a, b);
+    for (c=0; c < n; ++c)
+        if (adjacente(adj, a, c) && procurarCaminho(adj, k-1, c, b))
+            return 1;
+    return 0;
+}
+
+// REPRESENTAÇÃO ESTÁTICA
+
+typedef struct nodetype{
+    int info;
+    int point;
+    int next;
+    char livre;
+}tipoNodo;
+
+typedef tipoNodo listaDeNodos[MAXNODES];
+
+void jointwt(listaDeNodos node, int p, int q, int wt){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        node[r].info = wt;
+        return;
+    }
+    r = getnode(node);
+    if (r < 0)
+        exit(1);
+    node[r].info = wt;
+    node[r].next = -1;
+    node[r].point = q;
+    node[r].livre = 0;
+    if (r2 < 0)
+        node[p].point = r;
+    else
+        node[r2].next = r;
+}
+
+int getnode(listaDeNodos node){
+    int i;
+    for (i=0; i < MAXNODES; ++i)
+        if (node[i].livre == 1)
+            return i;
+    return -1;
+}
+
+void inicializaGrafo(int *grafo, listaDeNodos node){
+    int i;
+    for (i=0; i < MAXNODES; ++i)
+        node[i].livre = 1;
+    *grafo = -1;
+}
+
+// GRAFOS COM LISTA DE NODOS VAZIOS
+
+void criaListaDeNodosVazios(int *listaDeNodosVazios, listaDeNodos node){
+    int i;
+    for (i=1; i < MAXNODES; ++i)
+        node[i-1].next = i;
+    node[i-1].next = -1;
+    *listaDeNodosVazios = 0;
+}
+
+int getnodeLista(int *listaDeNodosVazios, listaDeNodos node){
+    int i = *listaDeNodosVazios;
+    if (i != -1){
+        *listaDeNodosVazios = node[i].next;
+        return i;
+    }
+    printf("out of memory!\n");
+    exit(1);
+}
+
+void joinwtLNV(listaDeNodos node, int *listaDeNodosVazios, int p, int q, int wt){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        node[r].info = wt;
+        return;
+    }
+    r = getnodeLista(*listaDeNodosVazios, node);
+    node[r].info = wt;
+    node[r].next = -1;
+    node[r].point = q;
+}
+
+void join(listaDeNodos node, int *LDNV, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r < 0){
+        r = getnodeLista(node, *LDNV);
+        node[r].point = q;
+        node[r].next = -1;
+        if (r2 < 0)
+            node[p].point = r;
+        else
+            node[r2].next = r;
+    }
+}
+
+// remv sem wt
+void remv(listaDeNodos node, int *LDNV, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        if (r2 < 0)
+            node[p].point = node[r].next;
+        else
+            node[r2].next = node[r].next;
+        freenode(LDNV, node, r);
+    }
+}
+
+void freenode(int *listaDeNodosVazios, listaDeNodos node, int r){
+    node[r].next = *listaDeNodosVazios;
+    *listaDeNodosVazios = r;
+}
+
+// remv com wt (mesma coisa)
+void remvwt(listaDeNodos node, int *LDNV, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        if (r2 < 0)
+            node[p].point = node[r].next;
+        else
+            node[r2].next = node[r].next;
+        freenode(LDNV, node, r);
+    }
+}
+
+char adjacent(listaDeNodos node, int p, int q){
+    int r;
+    r = node[p].point;
+    while (r >= 0)
+        if (node[r].point == q)
+            return 1;
+        else
+            r = node[r].next;
+    return 0;
 }

@@ -14,8 +14,9 @@
     
     int i=0;
     int pos = hashing;
-    while(i < tam && tabela...)
-    (pos+i)%tam -> evitar que acesse área inacessível do vetor
+    while(i < tam && tabela[(pos+i)%tam]...)
+    (pos+i)%tam -> evita que acesse área inacessível do vetor
+                   se o i passar de tam.
     if (i < tam)
 
 - HASHING FECHADO QUADRATICO:
@@ -23,8 +24,16 @@
     mesmo modo que o fechado
 
     ponto principal:
-        while (k < tam...){
+        while (k < tam && tabela[pos]...){
             pos = (pos+k)%tam;
             k = k+1;
         }
 
+- GRAFOS:
+    procurarCaminho(adj, k, a, b)
+        caso base:
+            k == 1 -> return adjacente(a, b)
+        caso recursivo:
+            for (c=0...)
+                if (adjacente(a, c) && procurarCaminho(k-1, c, b))
+        
