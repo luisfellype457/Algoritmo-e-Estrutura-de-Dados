@@ -383,3 +383,57 @@ char adjacent(listaDeNodos node, int p, int q){
             r = node[r].next;
     return 0;
 }
+
+int addnode(listaDeNodos node, int *ldnv, int *pgraph, int x){
+    int p = getnodeLista(ldnv, node);
+    node[p].info = x;
+    node[p].point = -1;
+    node[p].next = *pgraph;
+    *pgraph = p;
+    return p;
+}
+
+int remvnode(listaDeNodos node, int *ldnv, int *graph, int p){
+    int anterior, atual, retorno=0;
+    atual = anterior = *graph;
+    while (atual >= 0){
+        if (atual == p){
+            int aux, aux2;
+            if (atual == *graph)
+                *graph = node[atual].next;
+            else
+                node[anterior].next = node[atual].next;
+            aux = node[atual].point;
+            while (aux >= 0){
+                aux2 = aux;
+                aux = node[aux].next;
+                freenode(ldnv, node, aux2);
+            }
+            anterior = atual;
+            atual = node[atual].next;
+            freenode(ldnv, node, p);
+            retorno = 1;
+        } else {
+            int aux, aux2, auxNode;
+            aux = aux2 = node[atual].point;
+            while (aux >= 0){
+                if (node[aux].point == p){
+                    if (aux == aux2)
+                        node[atual].point = node[aux].next;
+                    else
+                        node[aux2].next = node[aux].next;
+                    auxNode = aux;
+                    aux2 = aux;
+                    aux = node[aux].next;
+                    freenode(ldnv, node, auxNode);
+                } else {
+                    aux2 = aux;
+                    aux = node[aux].next;
+                }
+            }
+            anterior = atual;
+            atual = node[atual].next;
+        }
+    }
+    return retorno;
+}

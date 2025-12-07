@@ -29,11 +29,52 @@
             k = k+1;
         }
 
-- GRAFOS:
+- GRAFOS MATRIZ:
     procurarCaminho(adj, k, a, b)
         caso base:
             k == 1 -> return adjacente(a, b)
         caso recursivo:
             for (c=0...)
                 if (adjacente(a, c) && procurarCaminho(k-1, c, b))
-        
+
+- GRAFOS ENCADEADOS NO VETOR:
+
+    1. inicializarGrafo
+    2. criaListaDeNodosVazios
+    3. getnode
+    4. freenode
+    5. joinwt
+    6. join
+    7. remv
+    8. remvwt
+    9. adjacent
+    10. findnode
+    11. addnode
+    12. remvnode
+        atual, anterior, retorno;
+        aux, aux2, auxNode;
+        atual = anterior = *graph;
+        - while (atual >= 0):
+            - achou o vertice?:
+                - primeiro?:
+                    - ajeita
+                - exclui os arcos:
+                    while, aux2 = aux, aux = node[aux].next, freenode(aux2);
+                - freenode
+                - retorno 1
+            - nao é o vertice?:
+                - acessa os arcos
+                - aponta para p?
+                    - é o primeiro?
+                        node[p].point = node[aux].next;
+                    - não?
+                        node[aux2].next = node[aux].next;
+                    - atualiza aux, aux2 e (auxNode?)
+                    - freenode(aux2 ou auxNode)
+                    
+
+
+
+
+
+
