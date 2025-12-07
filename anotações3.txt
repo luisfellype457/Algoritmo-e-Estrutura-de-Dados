@@ -72,9 +72,21 @@
                     - atualiza aux, aux2 e (auxNode?)
                     - freenode(aux2 ou auxNode)
                     
+- GRAFOS ENCADEADOS:
 
+    void inicializaGrafo(TADgraph *graph)
+    void joinwt(nodetype *p, nodetype *q, int wt)
+    void join(nodetype *p, nodetype *q)
+    void remv(nodetype *p, nodetype *q)
+    void remvwt(nodetype *p, nodetype *q)
+    char adjacent(nodetype *p, nodetype *q)
+    nodetype* findnode(TADgraph graph, int x)
+    nodetype* addnode(TADgraph *graph, int x)
+    int remvnode(TADgraph *graph, nodetype *p)  
 
+- BUSCA EM LARGURA DINÂMICA:
 
-
-
-
+    - precisa de 8 variáveis:
+        - int u, *pai, *d, *vertice, numVertices=0, ind;
+        - char *cor
+    - uma fila Q

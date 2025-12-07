@@ -9,7 +9,7 @@ typedef struct _nodetype{
 
 typedef nodetype *TADgraph;
 
-void incializaGrafo(TADgraph *graph){
+void inicializaGrafo(TADgraph *graph){
     *graph = NULL;
 }
 
@@ -114,11 +114,11 @@ nodetype* findnode(TADgraph graph, int x){
     return NULL;
 }
 
-void addnode(TADgraph *graph, int x){
+nodetype* addnode(TADgraph *graph, int x){
     nodetype *p;
     p = (nodetype*) malloc(sizeof(nodetype));
     if (!p)
-        return;
+        exit(1);
     p->info = x;
     p->point = NULL;
     p->next = *graph;

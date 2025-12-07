@@ -88,6 +88,10 @@ void joinwtLNV(listaDeNodos node, int *listaDeNodosVazios, int p, int q, int wt)
     node[r].info = wt;
     node[r].next = -1;
     node[r].point = q;
+    if (r2 < 0)
+        node[p].point = r;
+    else
+        node[r2].next = r;
 }
 
 void join(listaDeNodos node, int *LDNV, int p, int q){
