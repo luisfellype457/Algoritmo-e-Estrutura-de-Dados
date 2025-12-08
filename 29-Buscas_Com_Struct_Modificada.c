@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAXNODES 10;
+
 // TAD FILA
 
-typedef struct {
-    int indMemoria;
-    int indInf;
-}DADOS;
-
 typedef struct nodo{
-    DADOS inf;
+    int inf;
     struct nodo *next;
 }NODO;
 
@@ -20,60 +17,59 @@ typedef struct{
 
 typedef DESCRITOR *FILA_ENC;
 
-void cria_fila(FILA_ENC *fila){
-    *fila = (DESCRITOR*) malloc(sizeof(DESCRITOR));
-    if (!*fila)
+void cria_fila(FILA_ENC *f){
+    *f = (NODO*) malloc(sizeof(DESCRITOR));
+    if (!*f)
         return;
-    (*fila)->INICIO = (*fila)->FIM = NULL;
+    (*f)->INICIO = (*f)->FIM = NULL;
 }
 
-int eh_vazia(FILA_ENC fila){
-    return !fila->INICIO;
+int eh_vazia(FILA_ENC f){
+    return !f->INICIO;
 }
 
-void ins(FILA_ENC fila, DADOS dado){
+void ins(FILA_ENC f, int v){
     NODO *novo;
     novo = (NODO*) malloc(sizeof(NODO));
     if (!novo)
         return;
-    novo->inf = dado;
-    novo->next = NULL;
-    if (!fila->FIM)
-        fila->INICIO = novo;
+    novo->inf = v;
+    if (!f->INICIO)
+        f->INICIO = novo;
     else
-        fila->FIM->next = novo;
-    fila->FIM = novo;
+        f->FIM->next = novo;
+    f->FIM = novo;
 }
 
-DADOS cons(FILA_ENC fila){
-    if (eh_vazia(fila))
+int cons(FILA_ENC f){
+    if (eh_vazia(f))
         return;
-    return fila->INICIO->inf;
+    return f->INICIO->inf;
 }
 
-void ret(FILA_ENC fila){
-    if (eh_vazia(fila))
+void ret(FILA_ENC f){
+    if (eh_vazia(f))
         return;
     else {
-        NODO *aux = fila->INICIO;
-        fila->INICIO = aux->next;
-        if (!fila->INICIO)
-            fila->FIM = NULL;
+        NODO *aux = f->INICIO;
+        f->INICIO = aux->next;
+        if (!f->INICIO)
+            f->FIM = NULL;
         free(aux);
     }
 }
 
-DADOS cons_ret(FILA_ENC fila){
-    if (eh_vazia(fila))
+int cons_ret(FILA_ENC f){
+    if (eh_vazia(f))
         return;
     else {
-        NODO *aux = fila->INICIO;
-        DADOS d = aux->inf;
-        fila->INICIO = aux->next;
-        if (!fila->INICIO)
-            fila->FIM = NULL;
+        NODO *aux = f->INICIO;
+        int v = aux->inf;
+        f->INICIO = aux->next;
+        if (!f->INICIO)
+            f->FIM = NULL;
         free(aux);
-        return d;
+        return v;
     }
 }
 
@@ -85,6 +81,10 @@ typedef struct{
     int info;
     int point;
     int next;
+    char cor;
+    int d;
+    int pai;
+    int f;
 }tipoNodo;
 
 typedef tipoNodo listaDeNodos[MAXNODES];
@@ -265,62 +265,89 @@ int remvnode(listaDeNodos node, int *ldnv, int *graph, int p){
     return retorno;
 }
 
-// FUNÇÃO DE BUSCA SEM MODIFICAR STRUCT     
+// BUSCA EM LARGURA
 
 void buscaEmLargura(listaDeNodos node, int G, int s){
-    int u, *d=NULL, *pai=NULL, *vertice=NULL, numVertices=0, v, ind;
-    char *cor=NULL;
+    int u, v, ind;
     FILA_ENC Q;
-    DADOS aux;
     u = G;
     while (u >= 0){
-        ++numVertices;
-        d = (int*) realloc(d, numVertices*sizeof(int));
-        if (!d) return;
-        pai = (int*) realloc(pai, numVertices*sizeof(int));
-        if (!pai) return;
-        vertice = (int*) realloc(vertice, numVertices*sizeof(int));
-        if (!vertice) return;
-        cor = (char*) realloc(cor, numVertices*sizeof(char));
-        if (!cor) return;
         if (u != s){
-            d[numVertices-1] = -1;
-            pai[numVertices-1] = -1;
-            vertice[numVertices-1] = node[u].info;
-            cor[numVertices-1] = 'B';
+            node[u].cor = 'B';
+            node[u].d = -1;
+            node[u].pai = -1;
         } else {
-            ind = numVertices-1;
-            d[ind] = 0;
-            pai[ind] = -1;
-            vertice[ind] = node[u].info;
-            cor[ind] = 'C';
+            node[u].cor = 'C';
+            node[u].d = 0;
+            node[u].pai = -1;
         }
         u = node[u].next;
     }
     cria_fila(&Q);
-    aux.indInf = s;
-    aux.indMemoria = ind;
-    ins(Q, aux);
+    ins(Q, s);
     while (!eh_vazia(Q)){
-        aux = cons_ret(Q);
-        u = aux.indInf;
-        v = G;
-        ind = -1;
+        u = cons_ret(Q);
+        v = node[u].point;
         while (v >= 0){
-            ind++;
-            if (adjacent(node, u, v)){
-                if (cor[ind] == 'B'){
-                    DADOS aux2;
-                    cor[ind] = 'C';
-                    d[ind] = d[aux.indMemoria] + 1;
-                    pai[ind] = u;
-                    aux2.indInf = v;
-                    aux2.indMemoria = ind;
-                    ins(Q, aux2);
-                }
+            if (node[node[v].point].cor == 'B'){
+                node[node[v].point].cor = 'C';
+                node[node[v].point].d = node[u].d + 1;
+                node[node[v].point].pai = u;
+                ins(Q, node[v].point);
             }
             v = node[v].next;
         }
-        cor[aux.indMemoria] = 'P';  
+        node[u].cor = 'P';
     }
+}
+
+// MENOR CAMINHO
+
+void imprimirCaminho(listaDeNodos node, int s, int v){
+    if (v == s)
+        printf("%c ", node[s].info);
+    else
+        if (node[v].pai == -1)
+            printf("no way to v\n");
+        else {
+            imprimirCaminho(node, s, node[v].pai);
+            printf("%c ", node[v].info);
+        }
+}
+
+// BUSCA EM PROFUNDIDADE
+
+int tempo;
+
+void buscaEmProfundidade(listaDeNodos node, int G){
+    int u = G;
+    while (u >= 0){
+        node[u].cor = 'B';
+        node[u].pai = -1;
+        u = node[u].next;
+    }
+    tempo = 0;
+    u = G;
+    while (u >= 0){
+        if (node[u].cor == 'B')
+            visitaBuscaEmProfundidade(node, u);
+        u = node[u].next;
+    }
+}
+
+void visitaBuscaEmProfundidade(listaDeNodos node, int u){
+    int v;
+    node[u].cor = 'C';
+    tempo++;
+    node[u].d = tempo;
+    v = node[u].point;
+    while (v >= 0){
+        if (node[node[v].point].cor == 'B'){
+            node[node[v].point].pai = u;
+            visitaBuscaEmProfundidade(node, node[v].point);
+        }
+        v = node[v].next;
+    }
+    node[u].cor = 'P';
+    node[u].f = ++tempo;
 }
