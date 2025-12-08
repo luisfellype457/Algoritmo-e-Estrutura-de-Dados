@@ -214,6 +214,8 @@ int adjacente(int adj[][MAXNODES], int node1, int node2){
     return adj[node1][node2];
 }
 
+int n = 8;
+
 int procurarCaminho(int adj[][MAXNODES], int k, int a, int b){
     int c;
     if (k == 1)
@@ -233,46 +235,6 @@ typedef struct nodetype{
 }tipoNodo;
 
 typedef tipoNodo listaDeNodos[MAXNODES];
-
-void jointwt(listaDeNodos node, int p, int q, int wt){
-    int r, r2;
-    r2 = -1;
-    r = node[p].point;
-    while (r >= 0 && node[r].point != q){
-        r2 = r;
-        r = node[r].next;
-    }
-    if (r >= 0){
-        node[r].info = wt;
-        return;
-    }
-    r = getnode(node);
-    if (r < 0)
-        exit(1);
-    node[r].info = wt;
-    node[r].next = -1;
-    node[r].point = q;
-    node[r].livre = 0;
-    if (r2 < 0)
-        node[p].point = r;
-    else
-        node[r2].next = r;
-}
-
-int getnode(listaDeNodos node){
-    int i;
-    for (i=0; i < MAXNODES; ++i)
-        if (node[i].livre == 1)
-            return i;
-    return -1;
-}
-
-void inicializaGrafo(int *grafo, listaDeNodos node){
-    int i;
-    for (i=0; i < MAXNODES; ++i)
-        node[i].livre = 1;
-    *grafo = -1;
-}
 
 // GRAFOS COM LISTA DE NODOS VAZIOS
 
@@ -437,42 +399,229 @@ int remvnode(listaDeNodos node, int *ldnv, int *graph, int p){
     return retorno;
 }
 
-void buscaEmLargura(listaDeNodos node, int G, int s){
-    int u, *d=NULL, *pai=NULL, *vertice=NULL, v, ind, numVertices=0;
-    char *cor=NULL;
-    FILA_ENC Q;
-    DADOS aux;
-    u = G;
-    while (u >= 0){
-        ++numVertices;
-        d = (int*) realloc(d, numVertices*sizeof(int));
-        if (!d) return;
-        pai = (int*) realloc(pai, numVertices*sizeof(int));
-        if (!pai) return;
-        vertice = (int*) realloc(vertice, numVertices*sizeof(int));
-        if (!vertice) return;
-        cor = (char*) realloc(cor, numVertices*sizeof(char));
-        if (!cor) return;
-        if (u != s){
-            cor[numVertices-1] = 'B';
-            d[numVertices-1] = -1;
-            pai[numVertices-1] = -1;
-            vertice[numVertices-1] = node[u].info;
+// TAD GRAFO ENCADEADO EM VETOR
+
+#define MAXNODES 10
+
+typedef struct{
+    int info;
+    int point;
+    int next;
+    char cor;
+    int d;
+    int pai;
+    int f;
+}tipoNodo;
+
+typedef tipoNodo listaDeNodos[MAXNODES];
+
+void inicializaGrafo(listaDeNodos node){
+    int i;
+    for (i=1; i < MAXNODES; ++i)
+        node[i-1].next = i;
+    node[i-1].next = -1;
+}
+
+void criaListaDeNodosVazios(int *ldnv, listaDeNodos node){
+    *ldnv = 0;
+}
+
+int getnode(int *ldnv, listaDeNodos node){
+    int i = *ldnv;
+    if (i != -1){
+        *ldnv = node[i].next;
+        return i;
+    }
+    printf("sem armazenamento!\n");
+    exit(1);
+}
+
+void freenode(int *ldnv, listaDeNodos node, int p){
+    node[p].next = *ldnv;
+    *ldnv = p;
+}
+
+void joinwt(listaDeNodos node, int *ldnv, int p, int q, int wt){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        node[r].info = wt;
+        return;
+    }
+    r = getnode(ldnv, node);
+    node[r].point = q;
+    node[r].info = wt;
+    node[r].next = -1;
+    if (r2 < 0)
+        node[p].point = r;
+    else
+        node[r2].next = r;
+}
+
+void join(listaDeNodos node, int *ldnv, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r < 0){
+        r = getnode(ldnv, node);
+        node[r].point = q;
+        node[r].next = -1;
+        if (r2 < 0)
+            node[p].point = r;
+        else
+            node[r2].next = r;
+    }
+}
+
+void remv(listaDeNodos node, int *ldnv, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        if (r2 < 0)
+            node[p].point = node[r].next;
+        else
+            node[r2].point = node[r].next;
+        freenode(ldnv, node, r);
+    }
+}
+
+void remvwt(listaDeNodos node, int *ldnv, int p, int q){
+    int r, r2;
+    r2 = -1;
+    r = node[p].point;
+    while (r >= 0 && node[r].point != q){
+        r2 = r;
+        r = node[r].next;
+    }
+    if (r >= 0){
+        if (r2 < 0)
+            node[r].point = node[r].next;
+        else
+            node[r2].next = node[r].next;
+        freenode(ldnv, node, r);
+    }
+}
+
+char adjacent(listaDeNodos node, int p, int q){
+    int r;
+    r = node[p].point;
+    while (r >= 0)
+        if (node[r].point == q)
+            return 1;
+        else
+            r = node[r].next;
+    return 0;
+}
+
+int findnode(listaDeNodos node, int graph, int x){
+    int p = graph;
+    while (p >= 0)
+        if (node[p].info == x)
+            return p;
+        else
+            p = node[p].next;
+    return -1;
+}
+
+int addnode(listaDeNodos node, int *ldnv, int *graph, int x){
+    int p = getnode(ldnv, node);
+    node[p].info = x;
+    node[p].point = -1;
+    node[p].next = *graph;
+    *graph = p;
+    return p;
+}
+
+int remvnode(listaDeNodos node, int *ldnv, int *graph, int p){
+    int anterior, atual, retorno=0;
+    anterior = atual = *graph;
+    while (atual >= 0){
+        if (atual == p){
+            int aux, aux2;
+            if (atual == anterior)
+                *graph = node[atual].next;
+            else
+                node[anterior].next = node[atual].next;
+            aux = node[atual].point;
+            while (aux >= 0){
+                aux2 = aux;
+                aux = node[aux].next;
+                freenode(ldnv, node, aux2);
+            }
+            anterior = atual;
+            atual = node[atual].next;
+            freenode(ldnv, node, p);
+            retorno = 1;
         } else {
-            ind = numVertices-1;
-            cor[ind] = 'C';
-            d[ind] = 0;
-            pai[ind] = -1;
-            vertice[ind] = node[u].info;
+            int aux, aux2, auxNode;
+            aux = aux2 = node[atual].point;
+            while (aux >= 0){
+                if (node[aux].point == p){
+                    if (aux == aux2)
+                        node[atual].point = node[aux].next;
+                    else
+                        node[aux2].next = node[aux].next;
+                    auxNode = aux;
+                    aux2 = aux;
+                    aux = node[aux].next;
+                    freenode(ldnv, node, auxNode);
+                } else {
+                    aux2 = aux;
+                    aux = node[aux].next;
+                }
+            }
+            anterior = atual;
+            atual = node[atual].next;
         }
+    }
+    return retorno;
+}
+
+int tempo;
+
+void buscaEmProfundidade(listaDeNodos node, int G){
+    int u = G;
+    while (u >= 0){
+        node[u].cor = 'B';
+        node[u].pai = -1;
         u = node[u].next;
     }
-    cria_fila(Q);
-    aux.indInf = s;
-    aux.indMemoria = ind;
-    ins(Q, aux);
-    while (!eh_vazia(Q)){
-        aux = cons_ret(Q);
-
+    tempo = 0;
+    u = G;
+    while (u >= 0){
+        if (node[u].cor == 'B')
+            visitaBuscaEmProfundidade(node, u);
+        u = node[u].next;
     }
+}
+
+void visitaBuscaEmProfundidade(listaDeNodos node, int u){
+    int v;
+    node[u].cor = 'C';
+    tempo++;
+    node[u].d = tempo;
+    v = node[u].point;
+    while (v >= 0){
+        if (node[node[v].point].cor == 'B'){
+            node[node[v].point].pai = u;
+            visitaBuscaEmProfundidade(node, node[v].point);
+        }
+        v = node[v].next;
+    }
+    node[u].cor = 'P';
+    node[u].f = ++tempo;
 }

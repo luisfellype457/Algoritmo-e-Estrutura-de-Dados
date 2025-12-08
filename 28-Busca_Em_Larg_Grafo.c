@@ -319,6 +319,6 @@ void buscaEmLargura(listaDeNodos node, int G, int s){
             }
             v = node[v].next;
         }
-        cor[aux.indMemoria] = 'P';  
+        cor[aux.indMemoria] = 'P';
     }
 }
