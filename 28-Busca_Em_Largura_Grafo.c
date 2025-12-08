@@ -268,14 +268,13 @@ int remvnode(listaDeNodos node, int *ldnv, int *graph, int p){
 // FUNÇÃO DE BUSCA SEM MODIFICAR STRUCT     
 
 void buscaEmLargura(listaDeNodos node, int G, int s){
-    int u, *d=NULL, *pai=NULL, *vertice=NULL, numVertices=0, ind;
+    int u, *d=NULL, *pai=NULL, *vertice=NULL, numVertices=0, v, ind;
     char *cor=NULL;
     FILA_ENC Q;
     DADOS aux;
     u = G;
     while (u >= 0){
         ++numVertices;
-        
         d = (int*) realloc(d, numVertices*sizeof(int));
         if (!d) return;
         pai = (int*) realloc(pai, numVertices*sizeof(int));
@@ -284,7 +283,6 @@ void buscaEmLargura(listaDeNodos node, int G, int s){
         if (!vertice) return;
         cor = (char*) realloc(cor, numVertices*sizeof(char));
         if (!cor) return;
-
         if (u != s){
             d[numVertices-1] = -1;
             pai[numVertices-1] = -1;
@@ -292,7 +290,37 @@ void buscaEmLargura(listaDeNodos node, int G, int s){
             cor[numVertices-1] = 'B';
         } else {
             ind = numVertices-1;
-            
+            d[ind] = 0;
+            pai[ind] = -1;
+            vertice[ind] = node[u].info;
+            cor[ind] = 'C';
         }
+        u = node[u].next;
+    }
+    cria_fila(&Q);
+    aux.indInf = s;
+    aux.indMemoria = ind;
+    ins(Q, aux);
+    while (!eh_vazia(Q)){
+        aux = cons_ret(Q);
+        u = aux.indInf;
+        v = G;
+        ind = -1;
+        while (v >= 0){
+            ind++;
+            if (adjacent(node, u, v)){
+                if (cor[ind] == 'B'){
+                    DADOS aux2;
+                    cor[ind] = 'C';
+                    d[ind] = d[aux.indMemoria] + 1;
+                    pai[ind] = u;
+                    aux2.indInf = v;
+                    aux2.indMemoria = ind;
+                    ins(Q, aux2);
+                }
+            }
+            v = node[v].next;
+        }
+        cor[aux.indMemoria] = 'P';  
     }
 }

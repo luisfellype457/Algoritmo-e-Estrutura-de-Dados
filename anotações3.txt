@@ -87,6 +87,9 @@
 - BUSCA EM LARGURA DINÂMICA:
 
     - precisa de 8 variáveis:
-        - int u, *pai, *d, *vertice, numVertices=0, ind;
+        - int u, *pai, *d, *vertice, numVertices=0, v, ind;
         - char *cor
     - uma fila Q
+    - DADO aux para adicionar à fila
+    - 
+

@@ -230,7 +230,6 @@ typedef struct nodetype{
     int info;
     int point;
     int next;
-    char livre;
 }tipoNodo;
 
 typedef tipoNodo listaDeNodos[MAXNODES];
@@ -436,4 +435,44 @@ int remvnode(listaDeNodos node, int *ldnv, int *graph, int p){
         }
     }
     return retorno;
+}
+
+void buscaEmLargura(listaDeNodos node, int G, int s){
+    int u, *d=NULL, *pai=NULL, *vertice=NULL, v, ind, numVertices=0;
+    char *cor=NULL;
+    FILA_ENC Q;
+    DADOS aux;
+    u = G;
+    while (u >= 0){
+        ++numVertices;
+        d = (int*) realloc(d, numVertices*sizeof(int));
+        if (!d) return;
+        pai = (int*) realloc(pai, numVertices*sizeof(int));
+        if (!pai) return;
+        vertice = (int*) realloc(vertice, numVertices*sizeof(int));
+        if (!vertice) return;
+        cor = (char*) realloc(cor, numVertices*sizeof(char));
+        if (!cor) return;
+        if (u != s){
+            cor[numVertices-1] = 'B';
+            d[numVertices-1] = -1;
+            pai[numVertices-1] = -1;
+            vertice[numVertices-1] = node[u].info;
+        } else {
+            ind = numVertices-1;
+            cor[ind] = 'C';
+            d[ind] = 0;
+            pai[ind] = -1;
+            vertice[ind] = node[u].info;
+        }
+        u = node[u].next;
+    }
+    cria_fila(Q);
+    aux.indInf = s;
+    aux.indMemoria = ind;
+    ins(Q, aux);
+    while (!eh_vazia(Q)){
+        aux = cons_ret(Q);
+
+    }
 }
